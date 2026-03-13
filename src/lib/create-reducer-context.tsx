@@ -9,7 +9,7 @@ export const createReducerContext = <S, A, I = undefined>(
 
   const Provider = (
     props: { children: React.ReactNode } & (I extends undefined
-      ? Record<string, never>
+      ? {}
       : { initialArg: I }),
   ) => {
     // biome-ignore lint/suspicious/noExplicitAny: simple solution

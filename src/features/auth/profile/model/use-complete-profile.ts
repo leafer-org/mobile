@@ -41,6 +41,6 @@ export function useCompleteProfileForm({
     submit: () => completeProfileMutation.mutate({ fullName, avatar }),
     isSubmitting: completeProfileMutation.isPending,
     error: completeProfileMutation.error,
-    canSubmit: Boolean(fullName) && fullName.trim().length > 0,
+    canSubmit: Boolean(fullName) && fullName!.trim().length > 0,
   };
 }

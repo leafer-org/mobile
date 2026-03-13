@@ -71,7 +71,7 @@ export const refreshAccessToken = async () => {
     })
     .catch(async () => {
       await tokensStore.clear();
-      return;
+      return undefined;
     })
     .finally(() => {
       refreshAccessTokenPromise = undefined;
