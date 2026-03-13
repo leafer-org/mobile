@@ -35,6 +35,16 @@ No test runner is configured.
 - `src/lib/` — Generic reusable utilities: API context factory, error types, React hooks, RxJS helpers.
 - `src/support/` — Domain-specific shared features (e.g., user queries).
 
+### Import Direction
+
+Строгое направление зависимостей — каждый слой может импортировать только из слоёв правее:
+
+```
+app  →  features  →  support  →  kernel  →  lib
+```
+
+See [architecture/layers.md](architecture/layers.md) for full layer responsibilities.
+
 ### API Layer
 
 OpenAPI-first approach. The `http-contracts` git submodule contains YAML specs. Running `yarn api` generates TypeScript types into `src/kernel/api/schema.ts` (do not edit manually).
