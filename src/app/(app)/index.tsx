@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { Linking, ScrollView, View } from 'react-native';
 
 import { tokensStore } from '@/kernel/session';
@@ -7,6 +8,8 @@ import { Text } from '@/kernel/ui/text';
 import { useMeSuspense } from '@/support/user';
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   const openPlanDocument = async () => {
     await Linking.openURL('https://github.com/leafer-org/main/blob/main/work/1-idp.md');
   };
@@ -49,6 +52,9 @@ export default function HomeScreen() {
         <Text>{JSON.stringify(me, null, 2)}</Text>
 
         <View className="w-full gap-3">
+          <Button variant="primary" onPress={() => router.push('/(app)/profile')}>
+            Редактировать профиль
+          </Button>
           <Button variant="primary" onPress={openPlanDocument}>
             Открыть план разработки
           </Button>

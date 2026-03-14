@@ -15,6 +15,7 @@ export const createReducerContext = <S, A, I = undefined>(
 
     const [state, setState] = useState(() => init(initialArg as never));
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: infarstructure code
     const dispatch = useCallback(
       (action: A) => {
         setState((prevState) => reducer(prevState, action));

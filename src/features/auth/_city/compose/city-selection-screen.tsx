@@ -1,4 +1,5 @@
-import { useRegistrationDispatch } from '../../model/registration-store';
+import { useRegistrationState } from '../../model/registration-store';
+import { useCompleteRegistration } from '../../model/use-complete-registration';
 import { useCities } from '../model/use-cities';
 import { useCitySelection } from '../model/use-city-selection';
 import { useUserLocation } from '../model/use-user-location';
@@ -7,10 +8,14 @@ import { CitySearchInput } from '../ui/city-search-input';
 import { CitySelectionLayout } from '../ui/city-selection-layout';
 import { Button } from '@/kernel/ui/button';
 
-export function CitySelectionScreen({ onCitySelected }: { onCitySelected: () => void }) {
+export function CitySelectionScreen({ onComplete }: { onComplete: () => void }) {
   const citiesQuery = useCities();
   const location = useUserLocation();
-  const registrationDispatch = useRegistrationDispatch();
+  const { registrationSessionId } = useRegistrationState();
+
+  const completeRegistration = useCompleteRegistration({
+    onSuccess: onComplete,
+  });
 
   const { search, setSearch, filteredCities, selectedCity, setSelectedCity, handleProceed } =
     useCitySelection({
@@ -18,8 +23,12 @@ export function CitySelectionScreen({ onCitySelected }: { onCitySelected: () => 
       lat: location.lat,
       lng: location.lng,
       onProceed: (cityId, lat, lng) => {
-        registrationDispatch({ type: 'citySelected', cityId, lat, lng });
-        onCitySelected();
+        completeRegistration.complete({
+          registrationSessionId: registrationSessionId ?? '',
+          cityId,
+          lat,
+          lng,
+        });
       },
     });
 
@@ -35,7 +44,11 @@ export function CitySelectionScreen({ onCitySelected }: { onCitySelected: () => 
         />
       }
       actions={
-        <Button onPress={handleProceed} disabled={!selectedCity}>
+        <Button
+          onPress={handleProceed}
+          disabled={!selectedCity || completeRegistration.isPending}
+          loading={completeRegistration.isPending}
+        >
           Продолжить
         </Button>
       }

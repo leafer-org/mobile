@@ -7,8 +7,8 @@ export default function CityScreenRoute() {
 
   return (
     <CitySelectionScreen
-      onCitySelected={() => {
-        router.push('/(auth)/profile');
+      onComplete={() => {
+        router.replace('/(app)');
       }}
     />
   );
