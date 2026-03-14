@@ -1,7 +1,7 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const EnvSchema = z.object({
-  NODE_ENV: z.enum(["development", "production"]).default("development"),
+  NODE_ENV: z.enum(['development', 'production']).default('development'),
   EXPO_PUBLIC_API_BASE_URL: z.string(),
 });
 

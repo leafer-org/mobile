@@ -8,9 +8,7 @@ export const createReducerContext = <S, A, I = undefined>(
   const ActionContext = createContext<((action: A) => void) | undefined>(undefined);
 
   const Provider = (
-    props: { children: React.ReactNode } & (I extends undefined
-      ? {}
-      : { initialArg: I }),
+    props: { children: React.ReactNode } & (I extends undefined ? {} : { initialArg: I }),
   ) => {
     // biome-ignore lint/suspicious/noExplicitAny: simple solution
     const initialArg = (props as any)?.initialArg;

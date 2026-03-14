@@ -1681,16 +1681,6 @@ export interface components {
       /** @description JWT refresh-токен */
       refreshToken: string;
     };
-    /** @enum {string} */
-    MediaVisibility: MediaVisibility;
-    LinkMediaData: {
-      bucket: string;
-      objectKey: string;
-      /** @description Идентификатор загруженного медиа-объекта */
-      mediaId: string;
-      visibility: components['schemas']['MediaVisibility'];
-      contentType?: string;
-    };
     Avatar: {
       /** Format: uri */
       largeUrl: string;
@@ -1754,6 +1744,9 @@ export interface components {
       fileId: string;
       /** Format: uri */
       uploadUrl: string;
+      uploadFields: {
+        [key: string]: string;
+      };
     };
     PreviewDownloadUrlResult: {
       /** Format: uri */
@@ -2567,7 +2560,8 @@ export interface operations {
           /** @description Идентификатор сессии регистрации из verifyOtp */
           registrationSessionId: string;
           fullName?: string;
-          avatarMedia?: components['schemas']['LinkMediaData'];
+          /** @description Идентификатор медиа для аватара */
+          avatarId?: string;
           /** @description Идентификатор города */
           cityId: string;
           /** @description Широта */
@@ -7680,10 +7674,6 @@ export enum PathsAdminBoardsTriggersGetParametersQueryScope {
 }
 export enum ThrottledErrorResponseType {
   throttled = 'throttled',
-}
-export enum MediaVisibility {
-  PUBLIC = 'PUBLIC',
-  PRIVATE = 'PRIVATE',
 }
 export enum SortDirection {
   ASC = 'ASC',

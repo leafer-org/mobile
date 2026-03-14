@@ -24,6 +24,7 @@ export function ProfileSetupScreen({ onSuccess }: { onSuccess: () => void }) {
     lat,
     lng,
     fullName: fullNameField.fullName,
+    avatarId: uploadAvatar.uploadedFileId,
     onSuccess,
   });
 

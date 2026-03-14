@@ -11,8 +11,14 @@ export interface UploadResult {
   fileId: string;
 }
 
+interface PresignedPost {
+  fileId: string;
+  uploadUrl: string;
+  uploadFields: Record<string, string>;
+}
+
 export interface UseUploadMediaOptions {
-  fetchUploadUrl: (mimeType: string) => Promise<{ fileId: string; uploadUrl: string }>;
+  fetchUploadUrl: (mimeType: string) => Promise<PresignedPost>;
   onSuccess?: (result: UploadResult) => void;
   onError?: (error: Error) => void;
 }
@@ -22,11 +28,12 @@ export function useUploadMedia(options: UseUploadMediaOptions) {
 
   const mutation = useMutation({
     mutationFn: async (input: UploadMediaInput): Promise<UploadResult> => {
-      const { fileId, uploadUrl } = await options.fetchUploadUrl(input.contentType);
+      const { fileId, uploadUrl, uploadFields } = await options.fetchUploadUrl(input.contentType);
 
       await uploadToS3({
         file: input.file,
         uploadUrl,
+        uploadFields,
         onProgress: (p) => {
           setProgress(p);
           input.onProgress?.(p);
@@ -62,9 +69,16 @@ export function useUploadMedia(options: UseUploadMediaOptions) {
 async function uploadToS3(params: {
   file: File | Blob;
   uploadUrl: string;
+  uploadFields: Record<string, string>;
   onProgress?: (progress: number) => void;
 }): Promise<void> {
   return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(params.uploadFields)) {
+      formData.append(key, value);
+    }
+    formData.append('file', params.file);
+
     const xhr = new XMLHttpRequest();
 
     xhr.upload.addEventListener('progress', (event) => {
@@ -90,8 +104,7 @@ async function uploadToS3(params: {
       reject(new Error('Upload aborted'));
     });
 
-    xhr.open('PUT', params.uploadUrl);
-    xhr.setRequestHeader('Content-Type', params.file.type || 'application/octet-stream');
-    xhr.send(params.file);
+    xhr.open('POST', params.uploadUrl);
+    xhr.send(formData);
   });
 }

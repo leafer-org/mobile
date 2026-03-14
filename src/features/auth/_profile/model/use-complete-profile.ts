@@ -1,11 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { usePublicFetchClient } from '@/kernel/api/provider';
-import type { components } from '@/kernel/api/schema';
 import { tokensStore } from '@/kernel/session';
 import { ApiError } from '@/lib/api/error';
-
-type LinkMediaData = components['schemas']['LinkMediaData'];
 
 interface CompleteProfileParams {
   registrationSessionId: string;
@@ -13,7 +10,7 @@ interface CompleteProfileParams {
   lat?: number;
   lng?: number;
   fullName?: string;
-  avatarMedia?: LinkMediaData;
+  avatarId?: string;
 }
 
 export function useCompleteProfileForm({
@@ -22,17 +19,9 @@ export function useCompleteProfileForm({
   lat,
   lng,
   fullName,
-  avatarMedia,
+  avatarId,
   onSuccess,
-}: {
-  registrationSessionId: string;
-  cityId: string;
-  lat?: number;
-  lng?: number;
-  fullName?: string;
-  avatarMedia?: LinkMediaData;
-  onSuccess: () => void;
-}) {
+}: CompleteProfileParams & { onSuccess: () => void }) {
   const queryClient = useQueryClient();
   const publicClient = usePublicFetchClient();
 
@@ -45,7 +34,7 @@ export function useCompleteProfileForm({
           lat: args.lat,
           lng: args.lng,
           fullName: args.fullName,
-          avatarMedia: args.avatarMedia,
+          avatarId: args.avatarId,
         },
       });
       if (error) throw new ApiError(response.status, error);
@@ -63,14 +52,7 @@ export function useCompleteProfileForm({
 
   return {
     submit: () =>
-      mutation.mutate({
-        registrationSessionId,
-        cityId,
-        lat,
-        lng,
-        fullName,
-        avatarMedia,
-      }),
+      mutation.mutate({ registrationSessionId, cityId, lat, lng, fullName, avatarId }),
     isSubmitting: mutation.isPending,
     error: mutation.error,
     canSubmit: Boolean(fullName) && (fullName?.trim().length ?? 0) > 0,

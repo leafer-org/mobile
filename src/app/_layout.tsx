@@ -1,10 +1,10 @@
-import { Stack } from "expo-router";
+import { Stack } from 'expo-router';
 
-import { ThemeProvider } from "@/kernel/theme/theme-provider";
-import "../global.css";
+import { ThemeProvider } from '@/kernel/theme/theme-provider';
+import '../global.css';
 
-import { PublicApiProvider } from "@/kernel/api";
-import { useLogoutApiListener } from "@/kernel/session/session";
+import { PublicApiProvider } from '@/kernel/api';
+import { useLogoutApiListener } from '@/kernel/session/session';
 
 function EffectRegistry() {
   useLogoutApiListener();

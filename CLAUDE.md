@@ -67,6 +67,18 @@ Two fetch clients exist in `src/kernel/api/`:
 
 `createReducerContext` in `src/lib/` provides type-safe context + useReducer without Redux. Separates state and dispatch into distinct contexts. Used for feature-local state like OTP flow.
 
+### Feature Layer Anti-patterns
+
+| Слой | Нельзя | Нужно |
+|------|--------|-------|
+| compose | Inline-вёрстка с `Text`, `TextInput`, `View`-обёртками — compose превращается в UI | Вынести layout в `ui/` со слот-паттерном (`ReactNode`-пропсы), compose только передаёт слоты |
+| compose | Импортировать `@/kernel/ui` компоненты напрямую для вёрстки (кроме `ScreenLayout`) | Использовать `@/kernel/ui` только внутри `ui/`-компонентов, compose импортирует из `ui/` |
+| compose | Содержать `useMemo`, `useState`, фильтрацию, сортировку и другую логику | Вынести в `model/`-хук, compose только вызывает хуки и передаёт результат в ui |
+| compose | Содержать бизнес-логику или сложные вычисления | Вынести логику в `model/`-хуки, compose — тонкий связующий слой |
+| ui | Импортировать хуки из `model/` | Все данные и колбэки через пропсы |
+| ui | Импортировать другой `ui/`-компонент того же модуля | Собирать композицию в `compose/` через слоты |
+| model | Импортировать другой хук из `model/` (кроме внутри директории-элемента) | Каждый файл в `model/` изолирован, соединять в `compose/` |
+
 ## Conventions
 
 - Path alias: `@/` maps to `src/`
