@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "biome check src",
-    "api": "yarn dlx openapi-typescript ./http-contracts/main.yaml -o ./src/kernel/api/schema.ts --enum && yarn exec biome format --write ./src/kernel/api/schema.ts"
+    "api": "npx openapi-typescript ./http-contracts/main.yaml -o ./src/kernel/api/schema.ts --enum && yarn exec biome format --write ./src/kernel/api/schema.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -25,6 +25,7 @@
     "expo-image": "~55.0.6",
     "expo-image-picker": "~55.0.12",
     "expo-linking": "~55.0.7",
+    "expo-location": "~55.1.2",
     "expo-router": "~55.0.5",
     "expo-secure-store": "~55.0.8",
     "expo-splash-screen": "~55.0.10",

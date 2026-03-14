@@ -4,12 +4,10 @@ import { Button } from '@/kernel/ui/button';
 
 export function ProfileSetupActions({
   onSubmit,
-  onSkip,
   submitDisabled,
   loading,
 }: {
   onSubmit: () => void;
-  onSkip: () => void;
   submitDisabled: boolean;
   loading?: boolean;
 }) {
@@ -22,9 +20,6 @@ export function ProfileSetupActions({
         loading={loading}
       >
         Продолжить
-      </Button>
-      <Button variant="ghost" onPress={onSkip} disabled={loading}>
-        Пропустить
       </Button>
     </View>
   );

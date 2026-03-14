@@ -1,19 +1,20 @@
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import type { components } from '@/kernel/api/schema';
-
 export interface UploadMediaInput {
   file: File | Blob;
   contentType: string;
   onProgress?: (progress: number) => void;
 }
 
-export type MediaRecord = components['schemas']['LinkMediaData'];
+export interface UploadResult {
+  fileId: string;
+}
 
 export interface UseUploadMediaOptions {
-  fetchUploadUrl: (mimeType: string) => Promise<MediaRecord & { url: string }>;
-  onSuccess?: (result: MediaRecord) => void;
+  fetchUploadUrl: (mimeType: string) => Promise<{ fileId: string; uploadUrl: string }>;
+  confirmUpload: (fileIds: string[]) => Promise<void>;
+  onSuccess?: (result: UploadResult) => void;
   onError?: (error: Error) => void;
 }
 
@@ -21,19 +22,21 @@ export function useUploadMedia(options: UseUploadMediaOptions) {
   const [progress, setProgress] = useState(0);
 
   const mutation = useMutation({
-    mutationFn: async (input: UploadMediaInput): Promise<MediaRecord> => {
-      const { url, ...mediaRecord } = await options.fetchUploadUrl(input.contentType);
+    mutationFn: async (input: UploadMediaInput): Promise<UploadResult> => {
+      const { fileId, uploadUrl } = await options.fetchUploadUrl(input.contentType);
 
       await uploadToS3({
         file: input.file,
-        uploadUrl: url,
+        uploadUrl,
         onProgress: (p) => {
           setProgress(p);
           input.onProgress?.(p);
         },
       });
 
-      return mediaRecord;
+      await options.confirmUpload([fileId]);
+
+      return { fileId };
     },
     onSuccess: (data) => {
       setProgress(100);

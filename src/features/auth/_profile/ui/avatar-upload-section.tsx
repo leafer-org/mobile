@@ -5,7 +5,7 @@ import { Button } from '@/kernel/ui/button';
 import { Text } from '@/kernel/ui/text';
 
 export function AvatarUploadSection({
-  preview,
+  previewUrl,
   initials,
   onPress,
   isUploading,
@@ -19,14 +19,18 @@ export function AvatarUploadSection({
   hasUploaded: boolean;
   error?: Error;
   disabled?: boolean;
-  preview?: Avatar;
+  previewUrl?: string;
 }) {
+  const avatarData = previewUrl
+    ? { largeUrl: previewUrl, mediumUrl: previewUrl, smallUrl: previewUrl, thumbUrl: previewUrl }
+    : undefined;
+
   return (
-    <View className="items-center py-4 gap-3">
+    <View className="items-center gap-3 py-4">
       <TouchableOpacity onPress={onPress} disabled={isUploading || disabled}>
-        <Avatar size="xl" initials={initials || '?'} avatar={preview} />
+        <Avatar size="xl" initials={initials || '?'} avatar={avatarData} />
         {isUploading && (
-          <View className="absolute inset-0 items-center justify-center bg-black/50 rounded-full">
+          <View className="absolute inset-0 items-center justify-center rounded-full bg-black/50">
             <ActivityIndicator color="white" />
           </View>
         )}
@@ -34,7 +38,7 @@ export function AvatarUploadSection({
       <Button variant="ghost" onPress={onPress} disabled={isUploading || disabled}>
         {hasUploaded ? 'Изменить фото' : 'Добавить фото'}
       </Button>
-      {error && <Text className="text-red-500 text-sm">{error.message}</Text>}
+      {error && <Text className="text-sm text-red-500">{error.message}</Text>}
     </View>
   );
 }

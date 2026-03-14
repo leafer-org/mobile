@@ -1,17 +1,19 @@
 import { Stack } from 'expo-router';
 
-import { OtpStoreProvider } from '@/features/auth/otp';
+import { OtpStoreProvider } from '@/features/auth/_otp';
+import { RegistrationStoreProvider } from '@/features/auth/model/registration-store';
 
 export default function AuthLayout() {
-  console.log('AuthLayout');
   return (
     <OtpStoreProvider>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          animation: 'slide_from_right',
-        }}
-      />
+      <RegistrationStoreProvider>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        />
+      </RegistrationStoreProvider>
     </OtpStoreProvider>
   );
 }

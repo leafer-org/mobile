@@ -11,9 +11,9 @@ export function OtpScreen() {
   const { phone } = useLocalSearchParams<{ phone: string }>();
 
   const { handleSubmit, loading, errorMessage } = useVerifyOtp({
-    onSuccess: (needProfile) => {
-      if (needProfile) {
-        router.replace('/(auth)/profile');
+    onSuccess: (result) => {
+      if (result === 'new_registration') {
+        router.replace('/(auth)/city');
       } else {
         router.replace('/(app)');
       }

@@ -1,3 +1,3 @@
-import { OtpScreen } from '@/features/auth/otp';
+import { OtpScreen } from '@/features/auth/_otp';
 
 export default OtpScreen;
