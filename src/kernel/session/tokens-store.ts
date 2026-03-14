@@ -1,4 +1,4 @@
-import * as SecureStore from 'expo-secure-store';
+import { storage } from '@/lib/storage';
 
 export type SessionTokens = {
   accessToken: string;
@@ -16,7 +16,7 @@ export const tokensStore = {
     }
 
     try {
-      const result = SecureStore.getItem(TOKENS_KEY);
+      const result = storage.getItem(TOKENS_KEY);
 
       const token = result ? JSON.parse(result) : null;
 
@@ -32,7 +32,7 @@ export const tokensStore = {
     tokensStore.cache = tokens;
 
     try {
-      SecureStore.setItem(TOKENS_KEY, JSON.stringify(tokens));
+      storage.setItem(TOKENS_KEY, JSON.stringify(tokens));
     } catch (error) {
       console.debug('Failed to save tokens to secure store:', error);
     }
@@ -40,7 +40,7 @@ export const tokensStore = {
   clear: async () => {
     tokensStore.cache = undefined;
     try {
-      await SecureStore.deleteItemAsync(TOKENS_KEY);
+      await storage.deleteItem(TOKENS_KEY);
     } catch (error) {
       console.debug('Failed to clear tokens from secure store:', error);
     }

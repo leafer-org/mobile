@@ -92,7 +92,8 @@ async function uploadToS3(params: {
       if (xhr.status >= 200 && xhr.status < 300) {
         resolve();
       } else {
-        reject(new Error(`Upload failed with status ${xhr.status}`));
+        const message = parseS3Error(xhr.responseText) ?? `Upload failed with status ${xhr.status}`;
+        reject(new Error(message));
       }
     });
 
@@ -107,4 +108,15 @@ async function uploadToS3(params: {
     xhr.open('POST', params.uploadUrl);
     xhr.send(formData);
   });
+}
+
+const S3_ERROR_MESSAGES: Record<string, string> = {
+  EntityTooLarge: 'Файл слишком большой',
+  AccessDenied: 'Нет доступа для загрузки',
+};
+
+function parseS3Error(responseText: string): string | null {
+  const codeMatch = responseText.match(/<Code>(\w+)<\/Code>/);
+  if (!codeMatch) return null;
+  return S3_ERROR_MESSAGES[codeMatch[1]] ?? null;
 }

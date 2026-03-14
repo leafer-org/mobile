@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ls -la /d/projects/leafer/mono/mobile/src/app/\\\\\\(app\\\\\\))"
+      "Bash(ls -la /d/projects/leafer/mono/mobile/src/app/\\\\\\(app\\\\\\))",
+      "Bash(xargs grep:*)",
+      "Bash(wc -l \"/d/projects/leafer/mono/mobile/src/features/auth/_profile/model/\"*.ts*)"
     ]
   }
 }

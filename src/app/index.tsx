@@ -17,10 +17,9 @@ export default function Index() {
     );
   }
 
-  console.log(meQuery.data, meQuery.error);
 
   if (meQuery.isSuccess) {
-    return <Redirect href="/(auth)/profile" />;
+    return <Redirect href="/(app)" />;
   }
 
   if (meQuery.error) {

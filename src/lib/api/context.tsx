@@ -1,15 +1,9 @@
-import {
-  DehydratedState,
-  HydrationBoundary,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { Client } from 'openapi-fetch';
 import createClient, { OpenapiQueryClient } from 'openapi-react-query';
 import { createContext, PropsWithChildren, useContext, useMemo } from 'react';
 
 import { DEFAULT_QUERY_CLIENT_OPTIONS } from './constants';
-import { useStaticInitialize } from '@/lib/react/use-static-initialize';
 
 type ApiContextValue<Paths extends object> = {
   fetchClient: Client<Paths> | null;
@@ -18,7 +12,6 @@ type ApiContextValue<Paths extends object> = {
 
 type ApiProviderProps<Paths extends object> = PropsWithChildren & {
   fetchClient: Client<Paths>;
-  dehydratedState?: DehydratedState | null;
 };
 
 export const makeQueryClient = () =>
@@ -32,9 +25,7 @@ export const createApiContext = <Paths extends object>() => {
     $api: null,
   });
 
-  const Provider = ({ children, fetchClient, dehydratedState }: ApiProviderProps<Paths>) => {
-    const queryClient = useStaticInitialize(makeQueryClient);
-
+  const Provider = ({ children, fetchClient }: ApiProviderProps<Paths>) => {
     const ctx = useMemo(
       () => ({
         fetchClient,
@@ -43,13 +34,7 @@ export const createApiContext = <Paths extends object>() => {
       [fetchClient],
     );
 
-    return (
-      <ApiContext.Provider value={ctx}>
-        <QueryClientProvider client={queryClient}>
-          <HydrationBoundary state={dehydratedState}>{children}</HydrationBoundary>
-        </QueryClientProvider>
-      </ApiContext.Provider>
-    );
+    return <ApiContext.Provider value={ctx}>{children}</ApiContext.Provider>;
   };
 
   const useApi = () => {
