@@ -340,26 +340,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/media/confirm-upload': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Подтверждение загрузки файлов
-     * @description Переводит загруженные файлы из временного хранилища в постоянное.
-     */
-    post: operations['mediaConfirmUpload'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/media/preview/{mediaId}': {
     parameters: {
       query?: never;
@@ -1774,9 +1754,6 @@ export interface components {
       fileId: string;
       /** Format: uri */
       uploadUrl: string;
-    };
-    ConfirmUploadInput: {
-      fileIds: string[];
     };
     PreviewDownloadUrlResult: {
       /** Format: uri */
@@ -3467,68 +3444,6 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['UploadRequestResult'];
-        };
-      };
-      /** @description Ошибка валидации / Доменная ошибка */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json':
-            | components['schemas']['OpenApiValidationError']
-            | components['schemas']['DomainErrorResponse'];
-        };
-      };
-      /** @description Не авторизован */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['DomainErrorResponse'];
-        };
-      };
-      /** @description Файл не найден */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['DomainErrorResponse'];
-        };
-      };
-      /** @description Внутренняя ошибка сервера */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['OpenApiValidationError'];
-        };
-      };
-    };
-  };
-  mediaConfirmUpload: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['ConfirmUploadInput'];
-      };
-    };
-    responses: {
-      /** @description Загрузка подтверждена */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': Record<string, never>;
         };
       };
       /** @description Ошибка валидации / Доменная ошибка */

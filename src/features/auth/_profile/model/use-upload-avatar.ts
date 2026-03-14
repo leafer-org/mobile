@@ -15,12 +15,6 @@ export function useUploadAvatar({ onSuccess }: { onSuccess: (result: UploadResul
       if (apiError) throw apiError;
       return result;
     },
-    confirmUpload: async (fileIds) => {
-      // const { error: apiError } = await publicClient.POST('/media/confirm-upload', {
-      //   body: { fileIds },
-      // });
-      // if (apiError) throw apiError;
-    },
     onSuccess,
   });
 

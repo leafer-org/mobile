@@ -13,7 +13,6 @@ export interface UploadResult {
 
 export interface UseUploadMediaOptions {
   fetchUploadUrl: (mimeType: string) => Promise<{ fileId: string; uploadUrl: string }>;
-  confirmUpload: (fileIds: string[]) => Promise<void>;
   onSuccess?: (result: UploadResult) => void;
   onError?: (error: Error) => void;
 }
@@ -33,8 +32,6 @@ export function useUploadMedia(options: UseUploadMediaOptions) {
           input.onProgress?.(p);
         },
       });
-
-      await options.confirmUpload([fileId]);
 
       return { fileId };
     },
