@@ -41,9 +41,9 @@ export function useUploadAvatar() {
     const response = await fetch(asset.uri);
     const blob = await response.blob();
 
-    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    const MAX_FILE_SIZE = 20 * 1024 * 1024;
     if (blob.size > MAX_FILE_SIZE) {
-      throw new Error('Файл слишком большой. Максимальный размер — 10 МБ');
+      throw new Error('Файл слишком большой. Максимальный размер — 20 МБ');
     }
 
     const typedBlob = new Blob([blob], { type: mimeType });

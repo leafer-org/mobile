@@ -144,6 +144,26 @@ export interface paths {
     patch: operations['updateProfile'];
     trace?: never;
   };
+  '/me/permissions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Получение пермишенов текущего пользователя
+     * @description Возвращает разрешённые действия текущего пользователя на основе его роли.
+     */
+    get: operations['getMyPermissions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/me/sessions': {
     parameters: {
       query?: never;
@@ -2732,6 +2752,48 @@ export interface operations {
           'application/json':
             | components['schemas']['OpenApiValidationError']
             | components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Не авторизован */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Внутренняя ошибка сервера */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OpenApiValidationError'];
+        };
+      };
+    };
+  };
+  getMyPermissions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Пермишены пользователя */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            permissions: {
+              [key: string]: unknown;
+            };
+          };
         };
       };
       /** @description Не авторизован */

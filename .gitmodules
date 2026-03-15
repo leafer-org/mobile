@@ -1,3 +1,0 @@
-[submodule "http-contracts"]
-	path = http-contracts
-	url = git@github.com:leafer-org/http-contracts.git

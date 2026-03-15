@@ -7,6 +7,15 @@ import { ApiError } from '@/lib/api/error';
 
 export type VerifyOtpResult = 'authenticated' | 'new_registration';
 
+function formatApiError(error: ApiError): string {
+  const data = error.data as { type?: string; data?: { reason?: string } };
+  if (data.type === 'user_blocked') {
+    const reason = data.data?.reason;
+    return reason ? `Аккаунт заблокирован: ${reason}` : 'Аккаунт заблокирован';
+  }
+  return (data as { message?: string }).message ?? 'Ошибка при проверке кода';
+}
+
 interface VerifyOtpParams {
   phoneNumber: string;
   code: string;
@@ -51,7 +60,7 @@ export function useVerifyOtp(params?: { onSuccess?: (result: VerifyOtpResult) =>
 
   const errorMessage = verifyOtpMutation.error
     ? verifyOtpMutation.error instanceof ApiError
-      ? (verifyOtpMutation.error.data as { message?: string })?.message
+      ? formatApiError(verifyOtpMutation.error)
       : 'Ошибка при проверке кода'
     : undefined;
 

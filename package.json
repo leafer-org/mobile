@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "biome check src",
-    "api": "npx openapi-typescript ./http-contracts/main.yaml -o ./src/kernel/api/schema.ts --enum && yarn exec biome format --write ./src/kernel/api/schema.ts"
+    "api": "npx openapi-typescript ../http-contracts/main.yaml -o ./src/kernel/api/schema.ts --enum && yarn exec biome format --write ./src/kernel/api/schema.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
