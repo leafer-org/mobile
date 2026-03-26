@@ -46,7 +46,8 @@
         {
           "locationWhenInUsePermission": "Доступ к геолокации для определения ближайшего города"
         }
-      ]
+      ],
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true,

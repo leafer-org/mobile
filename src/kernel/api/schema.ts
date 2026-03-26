@@ -320,6 +320,90 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/admin/users/{userId}/block': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Блокировка пользователя
+     * @description Блокирует пользователя. Все сессии будут удалены, вход запрещён.
+     */
+    post: operations['blockUser'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/admin/users/{userId}/unblock': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Разблокировка пользователя
+     * @description Снимает блокировку с пользователя.
+     */
+    post: operations['unblockUser'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/admin/users/{userId}/sessions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Получение сессий пользователя (admin)
+     * @description Возвращает список активных сессий указанного пользователя.
+     */
+    get: operations['getAdminUserSessions'];
+    put?: never;
+    post?: never;
+    /**
+     * Удаление всех сессий пользователя (admin)
+     * @description Удаляет все сессии указанного пользователя.
+     */
+    delete: operations['deleteAllAdminSessions'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/admin/users/{userId}/sessions/{sessionId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Удаление сессии пользователя (admin)
+     * @description Удаляет указанную сессию пользователя.
+     */
+    delete: operations['deleteAdminSession'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/cities': {
     parameters: {
       query?: never;
@@ -340,7 +424,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/media/upload-request': {
+  '/media/image/upload-request': {
     parameters: {
       query?: never;
       header?: never;
@@ -354,6 +438,86 @@ export interface paths {
      * @description Возвращает presigned URL и идентификатор файла для загрузки.
      */
     post: operations['mediaUploadRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/media/image/upload-complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Подтверждение загрузки изображения
+     * @description Извлекает метаданные изображения (размеры, формат) из S3 и сохраняет в сущность.
+     */
+    post: operations['mediaImageUploadComplete'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/media/video/upload-init': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Инициализация multipart загрузки видео
+     * @description Создаёт media record, инициирует S3 multipart upload, возвращает presigned URLs для частей.
+     */
+    post: operations['mediaVideoUploadInit'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/media/video/upload-complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Завершение multipart загрузки видео
+     * @description Завершает S3 multipart upload и ставит видео в очередь обработки.
+     */
+    post: operations['mediaVideoUploadComplete'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/media/video/preview/{mediaId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Получение информации для воспроизведения видео
+     * @description Возвращает HLS URL и превью для видео.
+     */
+    get: operations['mediaVideoPreview'];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -579,6 +743,23 @@ export interface paths {
     put?: never;
     /** @description Записать раскрытие контактов организации */
     post: operations['recordShowContacts'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/interactions/contact-click': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Записать клик по конкретной ссылке контактов */
+    post: operations['recordContactClick'];
     delete?: never;
     options?: never;
     head?: never;
@@ -969,6 +1150,90 @@ export interface paths {
     patch: operations['updateCmsItemType'];
     trace?: never;
   };
+  '/admin/organizations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Поиск организаций (admin)
+     * @description Поиск организаций с фильтрацией по статусу и текстовому запросу.
+     */
+    get: operations['searchAdminOrganizations'];
+    put?: never;
+    /**
+     * Создание организации админом
+     * @description Создаёт организацию без владельца. Возвращает claim token для привязки владельца. Требуется ORGANIZATION.MANAGE.
+     */
+    post: operations['adminCreateOrganization'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/admin/organizations/{orgId}/items': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Создание товара админом
+     * @description Создаёт товар в организации, обходя ограничения тарифного плана. Требуется ORGANIZATION.MANAGE.
+     */
+    post: operations['adminCreateItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/admin/organizations/{id}/claim-token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Получение текущего claim token
+     * @description Возвращает текущий claim token организации (null если привязана).
+     */
+    get: operations['getClaimToken'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/admin/organizations/{id}/regenerate-token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Перегенерация claim token
+     * @description Генерирует новый claim token для непривязанной организации. Требуется ORGANIZATION.MANAGE.
+     */
+    post: operations['regenerateClaimToken'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/organizations': {
     parameters: {
       query?: never;
@@ -989,6 +1254,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/organizations/claim': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Привязка владельца к организации
+     * @description Привязывает текущего пользователя как владельца организации по claim token.
+     */
+    post: operations['claimOrganization'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/organizations/{id}': {
     parameters: {
       query?: never;
@@ -1003,7 +1288,11 @@ export interface paths {
     get: operations['getOrganization'];
     put?: never;
     post?: never;
-    delete?: never;
+    /**
+     * Удаление организации
+     * @description Удаляет организацию и все её товары. Доступно владельцу организации или админу с ORGANIZATION.MANAGE.
+     */
+    delete: operations['deleteOrganization'];
     options?: never;
     head?: never;
     /**
@@ -1067,6 +1356,46 @@ export interface paths {
      * @description Отклоняет модерацию профиля организации. Требуется глобальный permission ORGANIZATION.MODERATE.
      */
     post: operations['rejectInfoModeration'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/organizations/{id}/discard-draft-changes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Отменить изменения черновика
+     * @description Возвращает черновик к состоянию опубликованного профиля. Требуется edit_organization.
+     */
+    post: operations['discardInfoDraftChanges'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/organizations/{id}/unpublish': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Снять организацию с публикации
+     * @description Снимает организацию с публикации и снимает все опубликованные товары. Требуется publish_organization или ORGANIZATION.MANAGE.
+     */
+    post: operations['unpublishOrganization'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1198,7 +1527,7 @@ export interface paths {
     };
     /**
      * Список товаров организации
-     * @description Возвращает список товаров организации с информацией о статусе черновика и публикации.
+     * @description Возвращает список товаров организации с поиском и курсорной пагинацией.
      */
     get: operations['getOrganizationItems'];
     put?: never;
@@ -1721,6 +2050,12 @@ export interface components {
       phoneNumber: string;
       fullName?: string;
       avatar?: components['schemas']['Avatar'];
+      /** @description Идентификатор города пользователя */
+      cityId?: string;
+      /** @description Широта */
+      lat?: number;
+      /** @description Долгота */
+      lng?: number;
       /** Format: date-time */
       createdAt: string;
       /** Format: date-time */
@@ -1742,6 +2077,14 @@ export interface components {
        * @description Дата истечения сессии
        */
       expiresAt: string;
+      /** @description IP-адрес при создании сессии */
+      ip?: string | null;
+      /** @description Город по IP-адресу */
+      city?: string | null;
+      /** @description Страна по IP-адресу */
+      country?: string | null;
+      /** @description Устройство (например "Chrome on macOS") */
+      deviceName?: string | null;
     };
     Role: {
       /** Format: uuid */
@@ -1767,6 +2110,50 @@ export interface components {
       uploadFields: {
         [key: string]: string;
       };
+    };
+    ImageUploadCompleteRequest: {
+      mediaId: string;
+    };
+    ImageUploadCompleteResult: {
+      mediaId: string;
+      width: number;
+      height: number;
+      mimeType: string;
+    };
+    VideoUploadInitRequest: {
+      name: string;
+      mimeType: string;
+      fileSize: number;
+    };
+    VideoUploadInitResult: {
+      mediaId: string;
+      uploadId: string;
+      partUrls: string[];
+    };
+    VideoUploadCompleteRequest: {
+      mediaId: string;
+      uploadId: string;
+      parts: {
+        partNumber: number;
+        etag: string;
+      }[];
+    };
+    VideoUploadCompleteResult: {
+      mediaId: string;
+    };
+    VideoPreviewResult: {
+      mediaId: string;
+      /** @enum {string} */
+      processingStatus: VideoPreviewResultProcessingStatus;
+      /** @description Прогресс обработки в процентах (0-100). Доступен только при статусе processing. */
+      progress?: number | null;
+      /** Format: uri */
+      hlsUrl?: string | null;
+      /** Format: uri */
+      mp4PreviewUrl?: string | null;
+      /** Format: uri */
+      thumbnailUrl?: string | null;
+      duration?: number | null;
     };
     PreviewDownloadUrlResult: {
       /** Format: uri */
@@ -1822,18 +2209,61 @@ export interface components {
     CategoryListItem: {
       categoryId: string;
       name: string;
-      iconId?: string | null;
+      iconId: string;
       childCount: number;
       itemCount: number;
     };
-    ItemPayment: {
+    ImagePreview: {
+      /** Format: uri */
+      url: string;
+    };
+    ResolvedImageMedia: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: ResolvedImageMediaType;
+      mediaId: string;
+      preview?: components['schemas']['ImagePreview'];
+    };
+    VideoPreview: {
+      /** Format: uri */
+      thumbnailUrl: string | null;
+      /** Format: uri */
+      hlsUrl: string | null;
+      /** Format: uri */
+      mp4PreviewUrl: string | null;
       /** @enum {string} */
-      strategy: ItemPaymentStrategy;
+      processingStatus: VideoPreviewProcessingStatus;
+      progress?: number | null;
+    };
+    ResolvedVideoMedia: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: ResolvedVideoMediaType;
+      mediaId: string;
+      preview?: components['schemas']['VideoPreview'];
+    };
+    ResolvedMediaItem:
+      | components['schemas']['ResolvedImageMedia']
+      | components['schemas']['ResolvedVideoMedia'];
+    PaymentOption: {
+      name: string;
+      description?: string | null;
+      /** @enum {string} */
+      strategy: PaymentOptionStrategy;
       price?: number | null;
+    };
+    ItemPayment: {
+      options: components['schemas']['PaymentOption'][];
     };
     ItemOwnerSummary: {
       name: string;
       avatarId?: string | null;
+      /** Format: uri */
+      avatarUrl?: string | null;
     };
     ItemLocationSummary: {
       cityId: string;
@@ -1844,7 +2274,8 @@ export interface components {
       typeId: string;
       title: string;
       description?: string | null;
-      imageId?: string | null;
+      media?: components['schemas']['ResolvedMediaItem'][];
+      hasVideo: boolean;
       price?: components['schemas']['ItemPayment'] | null;
       rating?: number | null;
       reviewCount: number;
@@ -1939,10 +2370,27 @@ export interface components {
       message: string;
       error?: string;
     };
+    EventDate: {
+      /** Format: date-time */
+      date: string;
+      label?: string;
+    };
     ScheduleEntry: {
       dayOfWeek: number;
       startTime: string;
       endTime: string;
+    };
+    ContactLink: {
+      /** @enum {string} */
+      type: ContactLinkType;
+      value: string;
+      label?: string;
+    };
+    ResolvedTeamMember: {
+      name: string;
+      description?: string;
+      media: components['schemas']['ResolvedMediaItem'][];
+      employeeUserId?: string;
     };
     ItemWidgetView:
       | {
@@ -1950,7 +2398,7 @@ export interface components {
           type: ItemWidgetViewType;
           title: string;
           description: string;
-          imageId?: string | null;
+          media: components['schemas']['ResolvedMediaItem'][];
         }
       | {
           /** @enum {string} */
@@ -1969,9 +2417,7 @@ export interface components {
       | {
           /** @enum {string} */
           type: ItemWidgetViewType;
-          /** @enum {string} */
-          strategy: ItemWidgetViewStrategy;
-          price?: number | null;
+          options: components['schemas']['PaymentOption'][];
         }
       | {
           /** @enum {string} */
@@ -1984,6 +2430,8 @@ export interface components {
           organizationId: string;
           name: string;
           avatarId?: string | null;
+          /** Format: uri */
+          avatarUrl?: string | null;
         }
       | {
           /** @enum {string} */
@@ -2000,17 +2448,29 @@ export interface components {
       | {
           /** @enum {string} */
           type: ItemWidgetViewType;
-          dates: string[];
+          dates: components['schemas']['EventDate'][];
         }
       | {
           /** @enum {string} */
           type: ItemWidgetViewType;
           entries: components['schemas']['ScheduleEntry'][];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetViewType;
+          contacts: components['schemas']['ContactLink'][];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetViewType;
+          title: string;
+          members: components['schemas']['ResolvedTeamMember'][];
         };
     ItemDetailView: {
       itemId: string;
       typeId: string;
       widgets: components['schemas']['ItemWidgetView'][];
+      hasVideo: boolean;
       /** Format: date-time */
       publishedAt: string;
     };
@@ -2061,24 +2521,35 @@ export interface components {
       /** Format: date-time */
       updatedAt: string;
     };
-    CmsCategoryListItem: {
-      id: string;
-      parentCategoryId?: string | null;
-      name: string;
-      /** @enum {string} */
-      status: CmsCategoryListItemStatus;
-    };
     CategoryAttribute: {
       attributeId: string;
       name: string;
       required: boolean;
       schema: components['schemas']['AttributeSchema'];
     };
+    CmsCategoryListItem: {
+      id: string;
+      parentCategoryId?: string | null;
+      name: string;
+      iconId: string;
+      /** @default 0 */
+      order: number;
+      iconUrl: string;
+      ageGroups: CmsCategoryListItemAgeGroups[];
+      allowedTypeIds: string[];
+      /** @enum {string} */
+      status: CmsCategoryListItemStatus;
+      attributes: components['schemas']['CategoryAttribute'][];
+    };
     CmsCategoryDetail: {
       id: string;
       parentCategoryId?: string | null;
       name: string;
-      iconId?: string | null;
+      iconId: string;
+      /** @default 0 */
+      order: number;
+      iconUrl: string;
+      ageGroups: CmsCategoryDetailAgeGroups[];
       allowedTypeIds: string[];
       attributes: components['schemas']['CategoryAttribute'][];
       /** @enum {string} */
@@ -2091,18 +2562,226 @@ export interface components {
       updatedAt: string;
     };
     /** @enum {string} */
-    WidgetType: WidgetType;
+    PaymentStrategy: PaymentStrategy;
+    PaymentWidgetSettings: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: PaymentWidgetSettingsType;
+      required: boolean;
+      allowedStrategies: components['schemas']['PaymentStrategy'][];
+    };
+    EventDateTimeWidgetSettings: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: EventDateTimeWidgetSettingsType;
+      required: boolean;
+      maxDates?: number | null;
+    };
+    BaseWidgetSettings: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: BaseWidgetSettingsType;
+      required: boolean;
+    };
+    WidgetSettings:
+      | components['schemas']['PaymentWidgetSettings']
+      | components['schemas']['EventDateTimeWidgetSettings']
+      | components['schemas']['BaseWidgetSettings'];
     ItemTypeListItem: {
       id: string;
       name: string;
-      availableWidgetTypes: components['schemas']['WidgetType'][];
-      requiredWidgetTypes: components['schemas']['WidgetType'][];
+      label: string;
+      widgetSettings: components['schemas']['WidgetSettings'][];
     };
     ItemTypeDetail: {
       id: string;
       name: string;
-      availableWidgetTypes: components['schemas']['WidgetType'][];
-      requiredWidgetTypes: components['schemas']['WidgetType'][];
+      label: string;
+      widgetSettings: components['schemas']['WidgetSettings'][];
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    ImageMediaItem: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: ImageMediaItemType;
+      mediaId: string;
+    };
+    VideoMediaItem: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: VideoMediaItemType;
+      mediaId: string;
+    };
+    MediaItem: components['schemas']['ImageMediaItem'] | components['schemas']['VideoMediaItem'];
+    TeamMember: {
+      name: string;
+      description?: string;
+      media: components['schemas']['MediaItem'][];
+      employeeUserId?: string;
+    };
+    ItemWidgetInput:
+      | {
+          /** @enum {string} */
+          type: ItemWidgetInputType;
+          title: string;
+          description: string;
+          media: components['schemas']['MediaItem'][];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetInputType;
+          /** @enum {string} */
+          value: ItemWidgetInputValue;
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetInputType;
+          cityId: string;
+          lat: number;
+          lng: number;
+          address?: string | null;
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetInputType;
+          options: components['schemas']['PaymentOption'][];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetInputType;
+          categoryIds: string[];
+          attributes?: {
+            attributeId: string;
+            value: string;
+          }[];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetInputType;
+          dates: components['schemas']['EventDate'][];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetInputType;
+          entries: components['schemas']['ScheduleEntry'][];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetInputType;
+          contacts: components['schemas']['ContactLink'][];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetInputType;
+          title: string;
+          members: components['schemas']['TeamMember'][];
+        };
+    ItemWidget:
+      | {
+          /** @enum {string} */
+          type: ItemWidgetType;
+          title: string;
+          description: string;
+          media: components['schemas']['MediaItem'][];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetType;
+          /** @enum {string} */
+          value: ItemWidgetValue;
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetType;
+          cityId: string;
+          lat: number;
+          lng: number;
+          address?: string | null;
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetType;
+          options: components['schemas']['PaymentOption'][];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetType;
+          categoryIds: string[];
+          attributes?: {
+            attributeId: string;
+            value: string;
+          }[];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetType;
+          organizationId: string;
+          name: string;
+          avatarId?: string | null;
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetType;
+          rating?: number | null;
+          reviewCount: number;
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetType;
+          rating?: number | null;
+          reviewCount: number;
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetType;
+          dates: components['schemas']['EventDate'][];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetType;
+          entries: components['schemas']['ScheduleEntry'][];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetType;
+          contacts: components['schemas']['ContactLink'][];
+        }
+      | {
+          /** @enum {string} */
+          type: ItemWidgetType;
+          title: string;
+          members: components['schemas']['TeamMember'][];
+        };
+    /** @enum {string} */
+    ItemDraftStatus: ItemDraftStatus;
+    ItemDetail: {
+      itemId: string;
+      organizationId: string;
+      typeId: string;
+      draft?: {
+        widgets: components['schemas']['ItemWidget'][];
+        status: components['schemas']['ItemDraftStatus'];
+        /** Format: date-time */
+        updatedAt: string;
+      } | null;
+      publication?: {
+        widgets: components['schemas']['ItemWidget'][];
+        /** Format: date-time */
+        publishedAt: string;
+      } | null;
       /** Format: date-time */
       createdAt: string;
       /** Format: date-time */
@@ -2114,7 +2793,17 @@ export interface components {
       name: string;
       description: string;
       avatarId?: string | null;
+      media: components['schemas']['ResolvedMediaItem'][];
+      contacts?: components['schemas']['ContactLink'][];
+      team?: {
+        title?: string;
+        members?: components['schemas']['TeamMember'][];
+      };
       status: components['schemas']['InfoDraftStatus'];
+      /** Format: date-time */
+      updatedAt: string;
+      hasDraftChanges: boolean;
+      canSubmitForModeration: boolean;
     };
     Employee: {
       userId: string;
@@ -2132,6 +2821,8 @@ export interface components {
     };
     /** @enum {string} */
     SubscriptionPlanId: SubscriptionPlanId;
+    /** @enum {string} */
+    WidgetType: WidgetType;
     Subscription: {
       planId: components['schemas']['SubscriptionPlanId'];
       maxEmployees: number;
@@ -2145,6 +2836,12 @@ export interface components {
         name: string;
         description: string;
         avatarId?: string | null;
+        media: components['schemas']['ResolvedMediaItem'][];
+        contacts?: components['schemas']['ContactLink'][];
+        team?: {
+          title?: string;
+          members?: components['schemas']['TeamMember'][];
+        };
         /** Format: date-time */
         publishedAt: string;
       } | null;
@@ -2163,34 +2860,7 @@ export interface components {
       hasDraft?: boolean;
       draftStatus?: string | null;
       hasPublication?: boolean;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    ItemWidget: {
-      type: components['schemas']['WidgetType'];
-      data: {
-        [key: string]: unknown;
-      };
-    };
-    /** @enum {string} */
-    ItemDraftStatus: ItemDraftStatus;
-    ItemDetail: {
-      itemId: string;
-      organizationId: string;
-      typeId: string;
-      draft?: {
-        widgets: components['schemas']['ItemWidget'][];
-        status: components['schemas']['ItemDraftStatus'];
-        /** Format: date-time */
-        updatedAt: string;
-      } | null;
-      publication?: {
-        widgets: components['schemas']['ItemWidget'][];
-        /** Format: date-time */
-        publishedAt: string;
-      } | null;
+      widgets?: components['schemas']['ItemWidget'][];
       /** Format: date-time */
       createdAt: string;
       /** Format: date-time */
@@ -2239,6 +2909,11 @@ export interface components {
         moveToBoardId: string | null;
       };
     };
+    CloseTrigger: {
+      /** @enum {string} */
+      type: CloseTriggerType;
+      addComment: boolean;
+    };
     BoardDetail: {
       boardId: string;
       name: string;
@@ -2251,6 +2926,7 @@ export interface components {
       allowedTransferBoardIds: string[];
       memberIds: string[];
       automations: components['schemas']['BoardAutomation'][];
+      closeTrigger?: null | components['schemas']['CloseTrigger'];
       /** Format: date-time */
       createdAt: string;
       /** Format: date-time */
@@ -2301,6 +2977,7 @@ export interface components {
       boardId: string;
       message: string;
       triggerId?: string | null;
+      eventId?: string | null;
       data: components['schemas']['TicketData'];
       /** @enum {string} */
       status: TicketDetailStatus;
@@ -2338,7 +3015,10 @@ export interface components {
       };
     };
   };
-  parameters: never;
+  parameters: {
+    /** @description Device pixel ratio (1–4). Используется для вычисления размеров изображений через imgproxy. По умолчанию 3. */
+    DeviceDprHeader: number;
+  };
   requestBodies: never;
   headers: never;
   pathItems: never;
@@ -2480,20 +3160,32 @@ export interface operations {
             | components['schemas']['DomainErrorResponse'];
         };
       };
-      /** @description Превышено количество попыток */
+      /** @description Превышено количество попыток / Пользователь заблокирован */
       403: {
         headers: {
           [name: string]: unknown;
         };
         content: {
-          'application/json': {
-            /** @enum {string} */
-            type: PathsAuthVerifyOtpPostResponses403ContentApplicationJsonType;
-            message?: string;
-            /** @enum {boolean} */
-            isDomain: true;
-            retryAfterSec?: number;
-          };
+          'application/json':
+            | {
+                /** @enum {string} */
+                type: PathsAuthVerifyOtpPostResponses403ContentApplicationJsonType;
+                message?: string;
+                /** @enum {boolean} */
+                isDomain: true;
+                retryAfterSec?: number;
+              }
+            | {
+                /** @enum {string} */
+                type: PathsAuthVerifyOtpPostResponses403ContentApplicationJsonType;
+                message?: string;
+                /** @enum {boolean} */
+                isDomain: true;
+                data: {
+                  /** @description Причина блокировки */
+                  reason: string;
+                };
+              };
         };
       };
       /** @description Слишком много запросов */
@@ -2730,6 +3422,8 @@ export interface operations {
           lat?: number;
           /** @description Долгота */
           lng?: number;
+          /** @description Идентификатор загруженного файла аватарки */
+          avatarId?: string;
         };
       };
     };
@@ -3015,7 +3709,7 @@ export interface operations {
           'application/json': components['schemas']['Role'];
         };
       };
-      /** @description Ошибка валидации или роль уже существует */
+      /** @description Ошибка валидации, роль уже существует или невалидные разрешения */
       400: {
         headers: {
           [name: string]: unknown;
@@ -3029,6 +3723,9 @@ export interface operations {
                 message?: string;
                 /** @enum {boolean} */
                 isDomain: true;
+                data?: {
+                  [key: string]: unknown;
+                };
               };
         };
       };
@@ -3083,6 +3780,7 @@ export interface operations {
             type: PathsRolesPermissionsSchemaGetResponses200ContentApplicationJsonType;
             values?: string[];
             default: unknown;
+            description?: string;
           }[];
         };
       };
@@ -3409,6 +4107,9 @@ export interface operations {
               /** Format: date-time */
               createdAt: string;
               /** Format: date-time */
+              blockedAt?: string | null;
+              blockReason?: string | null;
+              /** Format: date-time */
               updatedAt: string;
             }[];
             total: number;
@@ -3440,6 +4141,230 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['OpenApiValidationError'];
+        };
+      };
+    };
+  };
+  blockUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          /** @description Причина блокировки */
+          reason: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Пользователь заблокирован */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': Record<string, never>;
+        };
+      };
+      /** @description Пользователь уже заблокирован */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Не авторизован */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Внутренняя ошибка сервера */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OpenApiValidationError'];
+        };
+      };
+    };
+  };
+  unblockUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Пользователь разблокирован */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': Record<string, never>;
+        };
+      };
+      /** @description Пользователь не заблокирован */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Не авторизован */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Внутренняя ошибка сервера */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OpenApiValidationError'];
+        };
+      };
+    };
+  };
+  getAdminUserSessions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Список сессий */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            sessions: components['schemas']['UserSession'][];
+          };
+        };
+      };
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  deleteAllAdminSessions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Все сессии удалены */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  deleteAdminSession: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userId: string;
+        sessionId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Сессия удалена */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Сессия не найдена */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
         };
       };
     };
@@ -3538,6 +4463,187 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['OpenApiValidationError'];
+        };
+      };
+    };
+  };
+  mediaImageUploadComplete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ImageUploadCompleteRequest'];
+      };
+    };
+    responses: {
+      /** @description Метаданные изображения извлечены и сохранены */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ImageUploadCompleteResult'];
+        };
+      };
+      /** @description Ошибка валидации / Доменная ошибка */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json':
+            | components['schemas']['OpenApiValidationError']
+            | components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Медиа не найдено */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  mediaVideoUploadInit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VideoUploadInitRequest'];
+      };
+    };
+    responses: {
+      /** @description Multipart upload инициирован */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VideoUploadInitResult'];
+        };
+      };
+      /** @description Ошибка валидации / Доменная ошибка */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json':
+            | components['schemas']['OpenApiValidationError']
+            | components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Медиа не найдено */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Внутренняя ошибка сервера */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OpenApiValidationError'];
+        };
+      };
+    };
+  };
+  mediaVideoUploadComplete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VideoUploadCompleteRequest'];
+      };
+    };
+    responses: {
+      /** @description Upload завершён, видео в очереди обработки */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VideoUploadCompleteResult'];
+        };
+      };
+      /** @description Ошибка валидации / Доменная ошибка */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json':
+            | components['schemas']['OpenApiValidationError']
+            | components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Медиа не найдено */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  mediaVideoPreview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mediaId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Информация для воспроизведения */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VideoPreviewResult'];
+        };
+      };
+      /** @description Файл уже используется, превью недоступно */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Медиа не найдено */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
         };
       };
     };
@@ -3720,7 +4826,10 @@ export interface operations {
         /** @description Конец диапазона времени (HH:mm) для фильтрации по расписанию */
         scheduleTimeTo?: string;
       };
-      header?: never;
+      header?: {
+        /** @description Device pixel ratio (1–4). Используется для вычисления размеров изображений через imgproxy. По умолчанию 3. */
+        'X-Device-DPR'?: components['parameters']['DeviceDprHeader'];
+      };
       path: {
         /** @description ID категории */
         id: string;
@@ -3788,7 +4897,10 @@ export interface operations {
         /** @description Количество элементов на странице */
         limit?: number;
       };
-      header?: never;
+      header?: {
+        /** @description Device pixel ratio (1–4). Используется для вычисления размеров изображений через imgproxy. По умолчанию 3. */
+        'X-Device-DPR'?: components['parameters']['DeviceDprHeader'];
+      };
       path?: never;
       cookie?: never;
     };
@@ -3827,7 +4939,10 @@ export interface operations {
         /** @description Количество элементов на странице */
         limit?: number;
       };
-      header?: never;
+      header?: {
+        /** @description Device pixel ratio (1–4). Используется для вычисления размеров изображений через imgproxy. По умолчанию 3. */
+        'X-Device-DPR'?: components['parameters']['DeviceDprHeader'];
+      };
       path?: never;
       cookie?: never;
     };
@@ -3859,7 +4974,10 @@ export interface operations {
         /** @description Количество элементов на странице */
         limit?: number;
       };
-      header?: never;
+      header?: {
+        /** @description Device pixel ratio (1–4). Используется для вычисления размеров изображений через imgproxy. По умолчанию 3. */
+        'X-Device-DPR'?: components['parameters']['DeviceDprHeader'];
+      };
       path?: never;
       cookie?: never;
     };
@@ -3880,7 +4998,10 @@ export interface operations {
   getDiscoveryItemDetail: {
     parameters: {
       query?: never;
-      header?: never;
+      header?: {
+        /** @description Device pixel ratio (1–4). Используется для вычисления размеров изображений через imgproxy. По умолчанию 3. */
+        'X-Device-DPR'?: components['parameters']['DeviceDprHeader'];
+      };
       path: {
         /** @description ID товара */
         itemId: string;
@@ -4029,6 +5150,42 @@ export interface operations {
     };
     responses: {
       /** @description Событие записано */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      401: components['responses']['UnauthorizedError'];
+    };
+  };
+  recordContactClick: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          /**
+           * Format: uuid
+           * @description ID товара
+           */
+          itemId: string;
+          /** @description Индекс ссылки в массиве contacts */
+          contactIndex?: number;
+          /**
+           * @description Тип ссылки
+           * @enum {string}
+           */
+          contactType?: PathsInteractionsContactClickPostRequestBodyApplicationJsonContactType;
+        };
+      };
+    };
+    responses: {
+      /** @description Клик записан */
       204: {
         headers: {
           [name: string]: unknown;
@@ -4664,8 +5821,11 @@ export interface operations {
           id: string;
           parentCategoryId?: string | null;
           name: string;
-          iconId?: string | null;
+          iconId: string;
+          /** @default 0 */
+          order?: number;
           allowedTypeIds: string[];
+          ageGroups: PathsCmsCategoriesPostRequestBodyApplicationJsonAgeGroups[];
         };
       };
     };
@@ -4763,9 +5923,12 @@ export interface operations {
       content: {
         'application/json': {
           name: string;
-          iconId?: string | null;
+          iconId: string;
+          /** @default 0 */
+          order?: number;
           parentCategoryId?: string | null;
           allowedTypeIds: string[];
+          ageGroups: PathsCmsCategoriesIdPatchRequestBodyApplicationJsonAgeGroups[];
         };
       };
     };
@@ -5050,8 +6213,8 @@ export interface operations {
         'application/json': {
           id: string;
           name: string;
-          availableWidgetTypes: components['schemas']['WidgetType'][];
-          requiredWidgetTypes: components['schemas']['WidgetType'][];
+          label: string;
+          widgetSettings: components['schemas']['WidgetSettings'][];
         };
       };
     };
@@ -5100,8 +6263,8 @@ export interface operations {
       content: {
         'application/json': {
           name: string;
-          availableWidgetTypes: components['schemas']['WidgetType'][];
-          requiredWidgetTypes: components['schemas']['WidgetType'][];
+          label: string;
+          widgetSettings: components['schemas']['WidgetSettings'][];
         };
       };
     };
@@ -5146,6 +6309,265 @@ export interface operations {
       };
     };
   };
+  searchAdminOrganizations: {
+    parameters: {
+      query?: {
+        /** @description Текстовый поисковый запрос */
+        query?: string;
+        /** @description Фильтр по статусу черновика */
+        status?: PathsAdminOrganizationsGetParametersQueryStatus;
+        /** @description Смещение для пагинации */
+        from?: number;
+        /** @description Размер страницы */
+        size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Результаты поиска */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            organizations: {
+              /** Format: uuid */
+              organizationId: string;
+              name: string;
+              description: string;
+              infoDraftStatus: string;
+              hasPublication: boolean;
+              employeeCount: number;
+              planId: string;
+              isClaimed: boolean;
+              /** Format: date-time */
+              createdAt: string;
+              /** Format: date-time */
+              updatedAt: string;
+            }[];
+            total: number;
+          };
+        };
+      };
+      /** @description Нет доступа (требуется ORGANIZATION.MODERATE) */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  adminCreateOrganization: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          name: string;
+          description?: string;
+          avatarId?: string | null;
+          media?: components['schemas']['MediaItem'][];
+          contacts?: components['schemas']['ContactLink'][];
+          team?: {
+            title?: string;
+            members?: components['schemas']['TeamMember'][];
+          };
+        };
+      };
+    };
+    responses: {
+      /** @description Организация создана */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            claimToken: string;
+          };
+        };
+      };
+      /** @description Ошибка валидации */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OpenApiValidationError'];
+        };
+      };
+      401: components['responses']['UnauthorizedError'];
+      /** @description Нет доступа (требуется ORGANIZATION.MANAGE) */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  adminCreateItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        orgId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          typeId: string;
+          widgets: components['schemas']['ItemWidgetInput'][];
+        };
+      };
+    };
+    responses: {
+      /** @description Товар создан */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ItemDetail'];
+        };
+      };
+      /** @description Ошибка валидации или доменная ошибка */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json':
+            | components['schemas']['OpenApiValidationError']
+            | components['schemas']['DomainErrorResponse'];
+        };
+      };
+      401: components['responses']['UnauthorizedError'];
+      /** @description Нет доступа (требуется ORGANIZATION.MANAGE) */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Организация или тип товара не найдены */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  getClaimToken: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Текущий claim token */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            claimToken: string | null;
+          };
+        };
+      };
+      401: components['responses']['UnauthorizedError'];
+      /** @description Нет доступа (требуется ORGANIZATION.MANAGE) */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  regenerateClaimToken: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Новый claim token */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** Format: uuid */
+            claimToken: string;
+          };
+        };
+      };
+      /** @description Организация уже привязана */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      401: components['responses']['UnauthorizedError'];
+      /** @description Нет доступа (требуется ORGANIZATION.MANAGE) */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Организация не найдена */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
   createOrganization: {
     parameters: {
       query?: never;
@@ -5159,6 +6581,12 @@ export interface operations {
           name: string;
           description: string;
           avatarId?: string | null;
+          media?: components['schemas']['MediaItem'][];
+          contacts?: components['schemas']['ContactLink'][];
+          team?: {
+            title?: string;
+            members?: components['schemas']['TeamMember'][];
+          };
         };
       };
     };
@@ -5179,6 +6607,43 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['OpenApiValidationError'];
+        };
+      };
+      401: components['responses']['UnauthorizedError'];
+    };
+  };
+  claimOrganization: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: uuid */
+          token: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Организация привязана */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrganizationDetail'];
+        };
+      };
+      /** @description Доменная ошибка (невалидный токен или организация уже привязана) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
         };
       };
       401: components['responses']['UnauthorizedError'];
@@ -5225,6 +6690,45 @@ export interface operations {
       };
     };
   };
+  deleteOrganization: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Организация удалена */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      401: components['responses']['UnauthorizedError'];
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Организация не найдена */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
   updateInfoDraft: {
     parameters: {
       query?: never;
@@ -5240,6 +6744,12 @@ export interface operations {
           name: string;
           description: string;
           avatarId?: string | null;
+          media?: components['schemas']['MediaItem'][];
+          contacts?: components['schemas']['ContactLink'][];
+          team?: {
+            title?: string;
+            members?: components['schemas']['TeamMember'][];
+          };
         };
       };
     };
@@ -5410,6 +6920,102 @@ export interface operations {
       };
       401: components['responses']['UnauthorizedError'];
       /** @description Нет доступа (требуется ORGANIZATION.MODERATE) */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Организация не найдена */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  discardInfoDraftChanges: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Изменения черновика отменены */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Доменная ошибка (нет публикации или нет изменений) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      401: components['responses']['UnauthorizedError'];
+      /** @description Нет доступа (требуется edit_organization) */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Организация не найдена */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  unpublishOrganization: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Организация снята с публикации */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Доменная ошибка (организация не опубликована) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      401: components['responses']['UnauthorizedError'];
+      /** @description Нет доступа (требуется publish_organization) */
       403: {
         headers: {
           [name: string]: unknown;
@@ -5908,7 +7514,11 @@ export interface operations {
   };
   getOrganizationItems: {
     parameters: {
-      query?: never;
+      query?: {
+        search?: string;
+        cursor?: string;
+        limit?: number;
+      };
       header?: never;
       path: {
         orgId: string;
@@ -5923,7 +7533,10 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['ItemListItem'][];
+          'application/json': {
+            items: components['schemas']['ItemListItem'][];
+            nextCursor?: string | null;
+          };
         };
       };
       401: components['responses']['UnauthorizedError'];
@@ -5960,7 +7573,7 @@ export interface operations {
       content: {
         'application/json': {
           typeId: string;
-          widgets: components['schemas']['ItemWidget'][];
+          widgets: components['schemas']['ItemWidgetInput'][];
         };
       };
     };
@@ -6110,7 +7723,9 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': {
-          widgets: components['schemas']['ItemWidget'][];
+          /** @description Новый тип товара (опционально, если нужно сменить тип) */
+          typeId?: string;
+          widgets: components['schemas']['ItemWidgetInput'][];
         };
       };
     };
@@ -6514,6 +8129,7 @@ export interface operations {
           description?: string | null;
           manualCreation: boolean;
           allowedTransferBoardIds: string[];
+          closeTrigger?: null | components['schemas']['CloseTrigger'];
         };
       };
     };
@@ -7651,8 +9267,12 @@ export enum PathsAuthVerifyOtpPostResponses200ContentApplicationJsonType {
 export enum PathsAuthVerifyOtpPostResponses403ContentApplicationJsonType {
   login_blocked = 'login_blocked',
 }
+export enum PathsAuthVerifyOtpPostResponses403ContentApplicationJsonType {
+  user_blocked = 'user_blocked',
+}
 export enum PathsRolesPostResponses400ContentApplicationJsonType {
   role_already_exists = 'role_already_exists',
+  invalid_permissions = 'invalid_permissions',
 }
 export enum PathsRolesPermissionsSchemaGetResponses200ContentApplicationJsonType {
   boolean = 'boolean',
@@ -7680,6 +9300,11 @@ export enum PathsSearchGetParametersQueryAgeGroup {
   children = 'children',
   all = 'all',
 }
+export enum PathsInteractionsContactClickPostRequestBodyApplicationJsonContactType {
+  phone = 'phone',
+  email = 'email',
+  link = 'link',
+}
 export enum PathsReviewsGetParametersQueryTargetType {
   item = 'item',
   organization = 'organization',
@@ -7691,6 +9316,19 @@ export enum PathsReviewsPostRequestBodyApplicationJsonTargetType {
 export enum PathsReviewsReviewIdResolveDisputePostRequestBodyApplicationJsonResolution {
   uphold = 'uphold',
   remove = 'remove',
+}
+export enum PathsCmsCategoriesPostRequestBodyApplicationJsonAgeGroups {
+  children = 'children',
+  adults = 'adults',
+}
+export enum PathsCmsCategoriesIdPatchRequestBodyApplicationJsonAgeGroups {
+  children = 'children',
+  adults = 'adults',
+}
+export enum PathsAdminOrganizationsGetParametersQueryStatus {
+  draft = 'draft',
+  moderation_request = 'moderation-request',
+  rejected = 'rejected',
 }
 export enum PathsAdminBoardsGetParametersQueryScope {
   platform = 'platform',
@@ -7737,11 +9375,29 @@ export enum PathsAdminBoardsTriggersGetParametersQueryScope {
 export enum ThrottledErrorResponseType {
   throttled = 'throttled',
 }
+export enum VideoPreviewResultProcessingStatus {
+  pending = 'pending',
+  processing = 'processing',
+  ready = 'ready',
+  failed = 'failed',
+}
 export enum SortDirection {
   ASC = 'ASC',
   DESC = 'DESC',
 }
-export enum ItemPaymentStrategy {
+export enum ResolvedImageMediaType {
+  image = 'image',
+}
+export enum VideoPreviewProcessingStatus {
+  pending = 'pending',
+  processing = 'processing',
+  ready = 'ready',
+  failed = 'failed',
+}
+export enum ResolvedVideoMediaType {
+  video = 'video',
+}
+export enum PaymentOptionStrategy {
   free = 'free',
   one_time = 'one-time',
   subscription = 'subscription',
@@ -7757,6 +9413,11 @@ export enum AttributeSchemaType {
 }
 export enum AttributeSchemaType {
   number = 'number',
+}
+export enum ContactLinkType {
+  phone = 'phone',
+  email = 'email',
+  link = 'link',
 }
 export enum ItemWidgetViewType {
   base_info = 'base-info',
@@ -7775,11 +9436,6 @@ export enum ItemWidgetViewType {
 export enum ItemWidgetViewType {
   payment = 'payment',
 }
-export enum ItemWidgetViewStrategy {
-  free = 'free',
-  one_time = 'one-time',
-  subscription = 'subscription',
-}
 export enum ItemWidgetViewType {
   category = 'category',
 }
@@ -7797,6 +9453,12 @@ export enum ItemWidgetViewType {
 }
 export enum ItemWidgetViewType {
   schedule = 'schedule',
+}
+export enum ItemWidgetViewType {
+  contact_info = 'contact-info',
+}
+export enum ItemWidgetViewType {
+  team = 'team',
 }
 export enum ReviewListItemTargetType {
   item = 'item',
@@ -7816,27 +9478,130 @@ export enum ReviewStatus {
   disputed = 'disputed',
   deleted = 'deleted',
 }
+export enum CmsCategoryListItemAgeGroups {
+  children = 'children',
+  adults = 'adults',
+}
 export enum CmsCategoryListItemStatus {
   draft = 'draft',
   published = 'published',
   unpublished = 'unpublished',
+}
+export enum CmsCategoryDetailAgeGroups {
+  children = 'children',
+  adults = 'adults',
 }
 export enum CmsCategoryDetailStatus {
   draft = 'draft',
   published = 'published',
   unpublished = 'unpublished',
 }
-export enum WidgetType {
+export enum PaymentStrategy {
+  free = 'free',
+  one_time = 'one-time',
+  subscription = 'subscription',
+}
+export enum PaymentWidgetSettingsType {
+  payment = 'payment',
+}
+export enum EventDateTimeWidgetSettingsType {
+  event_date_time = 'event-date-time',
+}
+export enum BaseWidgetSettingsType {
   base_info = 'base-info',
   age_group = 'age-group',
   location = 'location',
-  payment = 'payment',
   category = 'category',
   owner = 'owner',
   item_review = 'item-review',
   owner_review = 'owner-review',
-  event_date_time = 'event-date-time',
   schedule = 'schedule',
+  contact_info = 'contact-info',
+  team = 'team',
+}
+export enum ImageMediaItemType {
+  image = 'image',
+}
+export enum VideoMediaItemType {
+  video = 'video',
+}
+export enum ItemWidgetInputType {
+  base_info = 'base-info',
+}
+export enum ItemWidgetInputType {
+  age_group = 'age-group',
+}
+export enum ItemWidgetInputValue {
+  children = 'children',
+  adults = 'adults',
+  all = 'all',
+}
+export enum ItemWidgetInputType {
+  location = 'location',
+}
+export enum ItemWidgetInputType {
+  payment = 'payment',
+}
+export enum ItemWidgetInputType {
+  category = 'category',
+}
+export enum ItemWidgetInputType {
+  event_date_time = 'event-date-time',
+}
+export enum ItemWidgetInputType {
+  schedule = 'schedule',
+}
+export enum ItemWidgetInputType {
+  contact_info = 'contact-info',
+}
+export enum ItemWidgetInputType {
+  team = 'team',
+}
+export enum ItemWidgetType {
+  base_info = 'base-info',
+}
+export enum ItemWidgetType {
+  age_group = 'age-group',
+}
+export enum ItemWidgetValue {
+  children = 'children',
+  adults = 'adults',
+  all = 'all',
+}
+export enum ItemWidgetType {
+  location = 'location',
+}
+export enum ItemWidgetType {
+  payment = 'payment',
+}
+export enum ItemWidgetType {
+  category = 'category',
+}
+export enum ItemWidgetType {
+  owner = 'owner',
+}
+export enum ItemWidgetType {
+  item_review = 'item-review',
+}
+export enum ItemWidgetType {
+  owner_review = 'owner-review',
+}
+export enum ItemWidgetType {
+  event_date_time = 'event-date-time',
+}
+export enum ItemWidgetType {
+  schedule = 'schedule',
+}
+export enum ItemWidgetType {
+  contact_info = 'contact-info',
+}
+export enum ItemWidgetType {
+  team = 'team',
+}
+export enum ItemDraftStatus {
+  draft = 'draft',
+  moderation_request = 'moderation-request',
+  rejected = 'rejected',
 }
 export enum InfoDraftStatus {
   draft = 'draft',
@@ -7858,10 +9623,19 @@ export enum SubscriptionPlanId {
   individual = 'individual',
   team = 'team',
 }
-export enum ItemDraftStatus {
-  draft = 'draft',
-  moderation_request = 'moderation-request',
-  rejected = 'rejected',
+export enum WidgetType {
+  base_info = 'base-info',
+  age_group = 'age-group',
+  location = 'location',
+  payment = 'payment',
+  category = 'category',
+  owner = 'owner',
+  item_review = 'item-review',
+  owner_review = 'owner-review',
+  event_date_time = 'event-date-time',
+  schedule = 'schedule',
+  contact_info = 'contact-info',
+  team = 'team',
 }
 export enum BoardListItemScope {
   platform = 'platform',
@@ -7872,6 +9646,9 @@ export enum SubscriptionFilterType {
 }
 export enum SubscriptionFilterType {
   programmatic = 'programmatic',
+}
+export enum CloseTriggerType {
+  on_moderation_resolved = 'on-moderation-resolved',
 }
 export enum BoardDetailScope {
   platform = 'platform',

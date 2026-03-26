@@ -1,6 +1,6 @@
 # Фид — план реализации
 
-Главная страница приложения: баннеры, лента услуг, переключатель возрастной группы, выбор города.
+Главная страница приложения: баннеры, лента услуг с каруселью медиа (фото + видео), переключатель возрастной группы, выбор города.
 
 ## Макет
 
@@ -15,7 +15,14 @@
 │ └───────────────────────────────────┘│
 ├─────────────────────────────────────┤
 │                                     │
-│   Карточка услуги                   │
+│   ┌─ Карточка услуги ─────────────┐ │
+│   │ ┌──────────────────────────┐  │ │
+│   │ │  [img] ← [video] → [img]│  │ │  ← карусель медиа (свайп)
+│   │ │   ● ○ ○     ▶ autoplay  │  │ │
+│   │ └──────────────────────────┘  │ │
+│   │ title / price / rating / owner│ │
+│   └───────────────────────────────┘ │
+│                                     │
 │   Карточка услуги                   │  ← infinite scroll
 │   Карточка услуги                   │
 │   ...                               │
@@ -49,22 +56,67 @@
 { items: ItemListView[], nextCursor: string | null }
 ```
 
-### ItemListView
+### ItemListView (актуальный контракт)
+
+Backend резолвит все медиа-URL на сервере — клиент получает готовые URL, не нужно делать отдельные запросы.
+
 ```ts
 {
   itemId: string
   typeId: string
   title: string
   description: string | null
-  media: MediaItem[]         // { type: 'image' | 'video', mediaId: string }
+  media: ResolvedMediaItem[]   // готовые URL, см. ниже
   hasVideo: boolean
-  price: { strategy: 'free' | 'one-time' | 'subscription', price: number | null } | null
+  price: ItemPayment | null
   rating: number | null
   reviewCount: integer
-  owner: { name: string, avatarId: string | null } | null
-  location: { cityId: string, address: string | null } | null
+  owner: ItemOwnerSummary | null
+  location: ItemLocationSummary | null
   categoryIds: string[]
 }
+```
+
+### ResolvedMediaItem (discriminated union по `type`)
+```ts
+// image
+{ type: 'image', mediaId: string, preview?: { url: string } }
+
+// video
+{ type: 'video', mediaId: string, preview?: {
+  thumbnailUrl: string | null
+  hlsUrl: string | null           // HLS-стрим (полное воспроизведение)
+  mp4PreviewUrl: string | null    // короткий MP4-превью (автоплей в ленте)
+  processingStatus: 'pending' | 'processing' | 'ready' | 'failed'
+  progress: integer | null
+}}
+```
+
+### ItemPayment
+```ts
+{
+  options: PaymentOption[]
+}
+```
+
+### PaymentOption
+```ts
+{
+  name: string
+  description: string | null
+  strategy: 'free' | 'one-time' | 'subscription'
+  price: number | null
+}
+```
+
+### ItemOwnerSummary
+```ts
+{ name: string, avatarId: string | null, avatarUrl: string | null }
+```
+
+### ItemLocationSummary
+```ts
+{ cityId: string, address: string | null }
 ```
 
 ---
@@ -93,7 +145,9 @@ features/feed/
 │   └── use-city.ts          # текущий город пользователя (из /me или выбор)
 ├── ui/
 │   ├── banner-carousel.tsx  # горизонтальный FlatList баннеров
-│   ├── item-card.tsx        # карточка услуги (изображение/видео-превью, title, price, rating, owner)
+│   ├── media-carousel.tsx   # карусель медиа внутри карточки (фото + видео)
+│   ├── feed-video-player.tsx # видео-плеер для карусели (autoplay, preload)
+│   ├── item-card.tsx        # карточка услуги (карусель медиа, title, price, rating, owner)
 │   ├── item-list.tsx        # FlatList с infinite scroll, ListHeaderComponent для баннеров
 │   ├── age-group-toggle.tsx # переключатель взрослые/дети
 │   ├── city-selector.tsx    # кнопка выбора города в хедере
@@ -125,18 +179,36 @@ features/feed/
 
 ### Шаг 3 — UI-компоненты
 
-**banner-carousel.tsx**
-- Горизонтальный `FlatList` / `ScrollView` с `pagingEnabled`
-- Рендерит изображение баннера (через `imgproxy` URL)
-- Автопрокрутка (опционально)
+**media-carousel.tsx**
+- Горизонтальный `FlatList` с `pagingEnabled` / `snapToInterval` внутри карточки
+- Рендерит `ResolvedMediaItem[]` — изображения (preview.url) и видео вперемешку
 - Dot-индикаторы текущей позиции
+- Ленивая загрузка: рендерит только видимый слайд ± 1
+
+**feed-video-player.tsx**
+- **Autoplay**: видео запускается автоматически когда слайд карусели становится видимым
+- **Preload**: предзагрузка `mp4PreviewUrl` для следующих 2-3 карточек с видео (через `Video.prefetch` или кеш)
+- **Pause**: видео ставится на паузу когда:
+  - пользователь свайпнул на другой слайд карусели
+  - карточка ушла из viewport (IntersectionObserver / `onViewableItemsChanged`)
+  - приложение ушло в background (`AppState`)
+- **Muted by default**: звук выключен, кнопка unmute
+- **Fallback на thumbnail**: пока `preview.processingStatus !== 'ready'` — показывать `preview.thumbnailUrl`
+- Используем `expo-video` (`VideoView`) или `expo-av` (`Video`)
+- Формат воспроизведения в ленте: `preview.mp4PreviewUrl` (короткий превью, быстрее чем HLS)
 
 **item-card.tsx**
-- Первое медиа из `media[]` как обложка (Image или видео-превью)
-- Название, цена (форматирование: «бесплатно» / «от X ₽» / «X ₽/мес»)
+- `<MediaCarousel media={item.media} />` — вместо одной обложки
+- Название
+- Цена — форматирование из `PaymentOption[]`:
+  - Нет `price` → не показывать
+  - Одна опция `free` → «Бесплатно»
+  - Одна опция `one-time` → «X ₽»
+  - Одна опция `subscription` → «X ₽/мес»
+  - Несколько опций → «от X ₽» (минимальная ненулевая цена)
 - Рейтинг + количество отзывов (звёздочка + число)
-- Имя владельца + аватар
-- Иконка видео если `hasVideo`
+- Имя владельца + аватар (`owner.avatarUrl` — готовый URL с imgproxy)
+- Иконка видео если `hasVideo` (поверх карусели, если не на видео-слайде)
 
 **item-list.tsx**
 - `FlatList` с `onEndReached` → `fetchNextPage`
@@ -144,6 +216,14 @@ features/feed/
 - Pull-to-refresh
 - Skeleton-лоадеры при загрузке
 - Empty state
+- `onViewableItemsChanged` — управление autoplay видео (только 1 видео играет одновременно)
+- `windowSize` и `maxToRenderPerBatch` — оптимизация для тяжёлых карточек с видео
+
+**banner-carousel.tsx**
+- Горизонтальный `FlatList` / `ScrollView` с `pagingEnabled`
+- Рендерит изображение баннера (через imgproxy URL)
+- Автопрокрутка (опционально)
+- Dot-индикаторы текущей позиции
 
 **age-group-toggle.tsx**
 - Сегментированный контрол: «взрослые» / «дети»
@@ -174,11 +254,12 @@ compose соединяет:
 - `src/app/(app)/(tabs)/chats.tsx` — заглушка
 - `src/app/(app)/(tabs)/profile.tsx` — перенести текущий профиль
 
-### Шаг 6 — Медиа URL-хелпер
+### Шаг 6 — Оптимизация видео в ленте
 
-Утилита в `kernel/` или `support/` для формирования URL изображений:
-- `getImageUrl(mediaId, { width, height })` — через imgproxy
-- `getVideoPreviewUrl(mediaId)` — превью-кадр видео
+- **Prefetch**: при загрузке страницы фида — определить карточки с `hasVideo`, предзагрузить `mp4PreviewUrl` для первых 3
+- **Memory management**: `removeClippedSubviews` на FlatList, ограничение одновременных видео-инстансов (max 3)
+- **Network-aware**: на медленном соединении / cellular — не автоплеить, показывать thumbnail + кнопку play
+- **Battery-aware**: проверить `expo-battery` — при низком заряде отключить autoplay
 
 ---
 
