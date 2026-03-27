@@ -5,6 +5,7 @@ import type { ItemListView } from '../domain/types';
 import { useAgeGroup } from '../model/use-age-group';
 import { useCity } from '../model/use-city';
 import { useFeed } from '../model/use-feed';
+import { useLikedStatus } from '../model/use-like';
 import { CityPickerModal } from '../ui/city-picker-modal';
 import { FeedHeader } from '../ui/feed-header';
 import { ItemList } from '../ui/item-list';
@@ -29,6 +30,9 @@ export function FeedScreen() {
     [data],
   );
 
+  const itemIds = useMemo(() => items.map((i) => i.itemId), [items]);
+  const likedStatus = useLikedStatus(itemIds);
+
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -49,6 +53,7 @@ export function FeedScreen() {
       />
       <ItemList
         items={items}
+        likedItemIds={likedStatus.data}
         isLoading={isLoading}
         isFetchingNextPage={isFetchingNextPage}
         hasNextPage={hasNextPage ?? false}

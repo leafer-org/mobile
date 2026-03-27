@@ -1,3 +1,7 @@
+import type { ResolvedMediaItem } from '@/support/media';
+
+export type { ResolvedImageMedia, ResolvedMediaItem, ResolvedVideoMedia } from '@/support/media';
+
 export type AgeGroup = 'adults' | 'children';
 
 export type FeedParams = {
@@ -6,26 +10,6 @@ export type FeedParams = {
   lat?: number;
   lng?: number;
 };
-
-export type ResolvedImageMedia = {
-  type: 'image';
-  mediaId: string;
-  preview?: { url: string };
-};
-
-export type ResolvedVideoMedia = {
-  type: 'video';
-  mediaId: string;
-  preview?: {
-    thumbnailUrl: string | null;
-    hlsUrl: string | null;
-    mp4PreviewUrl: string | null;
-    processingStatus: 'pending' | 'processing' | 'ready' | 'failed';
-    progress: number | null;
-  };
-};
-
-export type ResolvedMediaItem = ResolvedImageMedia | ResolvedVideoMedia;
 
 export type PaymentOption = {
   name: string;

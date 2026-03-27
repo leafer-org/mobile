@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Image, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useVideoPlayer, VideoView } from 'expo-video';
 
-import type { ResolvedVideoMedia } from '../domain/types';
-import { Ionicons } from '@expo/vector-icons';
+import type { ResolvedVideoMedia } from '../types';
 
 type Props = {
   preview: ResolvedVideoMedia['preview'];
@@ -12,7 +12,7 @@ type Props = {
   isActive: boolean;
 };
 
-export function FeedVideoPlayer({ preview, width, height, isActive }: Props) {
+export function VideoPlayer({ preview, width, height, isActive }: Props) {
   const videoUrl = preview?.mp4PreviewUrl ?? preview?.hlsUrl;
   const isReady = preview?.processingStatus === 'ready' && videoUrl;
 
@@ -32,17 +32,9 @@ export function FeedVideoPlayer({ preview, width, height, isActive }: Props) {
 
   if (!isReady) {
     return (
-      <View
-        className="bg-slate-800 rounded-xl items-center justify-center"
-        style={{ width, height }}
-      >
+      <View className="bg-slate-800 items-center justify-center" style={{ width, height }}>
         {preview?.thumbnailUrl ? (
-          <Image
-            source={{ uri: preview.thumbnailUrl }}
-            style={{ width, height }}
-            resizeMode="cover"
-            className="rounded-xl"
-          />
+          <Image source={{ uri: preview.thumbnailUrl }} style={{ width, height }} resizeMode="cover" />
         ) : (
           <Ionicons name="videocam-outline" size={48} color="#94a3b8" />
         )}
@@ -51,13 +43,8 @@ export function FeedVideoPlayer({ preview, width, height, isActive }: Props) {
   }
 
   return (
-    <View style={{ width, height }} className="rounded-xl overflow-hidden">
-      <VideoView
-        player={player}
-        style={{ width, height }}
-        nativeControls={false}
-        contentFit="cover"
-      />
+    <View style={{ width, height }} className="overflow-hidden">
+      <VideoView player={player} style={{ width, height }} nativeControls={false} contentFit="cover" />
     </View>
   );
 }

@@ -7,12 +7,15 @@ import {
   type ViewToken,
 } from 'react-native';
 
+import { ItemCard } from '../compose/item-card';
 import type { ItemListView } from '../domain/types';
-import { ItemCard } from './item-card';
+import { GRID_GAP, HORIZONTAL_PADDING, NUM_COLUMNS } from './item-card-layout';
+import { ItemListSkeleton } from './item-card-skeleton';
 import { Text } from '@/kernel/ui/text';
 
 type Props = {
   items: ItemListView[];
+  likedItemIds?: Set<string>;
   isLoading: boolean;
   isFetchingNextPage: boolean;
   hasNextPage: boolean;
@@ -24,6 +27,7 @@ type Props = {
 
 export function ItemList({
   items,
+  likedItemIds,
   isLoading,
   isFetchingNextPage,
   hasNextPage,
@@ -46,11 +50,7 @@ export function ItemList({
   const viewabilityConfigRef = useRef({ itemVisiblePercentThreshold: 50 });
 
   if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center py-20">
-        <ActivityIndicator size="large" color="#0d9488" />
-      </View>
-    );
+    return <ItemListSkeleton />;
   }
 
   if (items.length === 0) {
@@ -70,8 +70,10 @@ export function ItemList({
     <FlatList
       data={items}
       keyExtractor={(item) => item.itemId}
+      numColumns={NUM_COLUMNS}
+      columnWrapperStyle={{ gap: GRID_GAP }}
       renderItem={({ item }) => (
-        <ItemCard item={item} isVisible={visibleItemIds.has(item.itemId)} />
+        <ItemCard item={item} isVisible={visibleItemIds.has(item.itemId)} isLiked={likedItemIds?.has(item.itemId) ?? false} />
       )}
       onEndReached={hasNextPage ? onEndReached : undefined}
       onEndReachedThreshold={0.5}
@@ -89,9 +91,13 @@ export function ItemList({
         ) : null
       }
       windowSize={5}
-      maxToRenderPerBatch={5}
+      maxToRenderPerBatch={6}
       removeClippedSubviews
-      contentContainerStyle={{ paddingTop: 8, paddingBottom: 16 }}
+      contentContainerStyle={{
+        paddingTop: 8,
+        paddingBottom: 16,
+        paddingHorizontal: HORIZONTAL_PADDING,
+      }}
     />
   );
 }

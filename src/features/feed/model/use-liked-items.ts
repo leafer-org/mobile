@@ -1,23 +1,20 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { PixelRatio } from 'react-native';
 
-import type { AgeGroup } from '../domain/types';
 import { useApiFetchClient } from '@/kernel/api/provider';
-import { PathsFeedGetParametersQueryAgeGroup } from '@/kernel/api/schema';
 
-export function useFeed(cityId: string, ageGroup: AgeGroup) {
+export function useLikedItems(search?: string) {
   const fetchClient = useApiFetchClient();
   const dpr = PixelRatio.get();
 
   return useInfiniteQuery({
-    enabled: cityId.length > 0,
-    queryKey: ['feed', { cityId, ageGroup }],
+    placeholderData: keepPreviousData,
+    queryKey: ['liked-items', { search }],
     queryFn: async ({ pageParam }) => {
-      const res = await fetchClient.GET('/feed', {
+      const res = await fetchClient.GET('/liked-items', {
         params: {
           query: {
-            cityId,
-            ageGroup: ageGroup as PathsFeedGetParametersQueryAgeGroup,
+            search: search || undefined,
             cursor: pageParam ?? undefined,
             limit: 20,
           },

@@ -698,6 +698,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/items/liked-status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Проверить статус лайков для списка товаров (батч) */
+    post: operations['checkLikedStatus'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/interactions/views': {
     parameters: {
       query?: never;
@@ -2051,7 +2068,7 @@ export interface components {
       fullName?: string;
       avatar?: components['schemas']['Avatar'];
       /** @description Идентификатор города пользователя */
-      cityId?: string;
+      cityId: string;
       /** @description Широта */
       lat?: number;
       /** @description Долгота */
@@ -5071,6 +5088,37 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      401: components['responses']['UnauthorizedError'];
+    };
+  };
+  checkLikedStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          /** @description Список ID товаров для проверки */
+          itemIds: string[];
+        };
+      };
+    };
+    responses: {
+      /** @description Статус лайков */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @description ID товаров, которые лайкнуты пользователем */
+            likedItemIds: string[];
+          };
+        };
       };
       401: components['responses']['UnauthorizedError'];
     };
