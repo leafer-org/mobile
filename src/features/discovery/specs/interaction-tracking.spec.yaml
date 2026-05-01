@@ -1,0 +1,32 @@
+feature: Трекинг взаимодействий
+code: interaction-tracking
+description: |
+  Автоматическая отправка событий взаимодействия пользователя с контентом.
+  POST /interactions/views, /interactions/click, /interactions/show-contacts, /interactions/contact-click
+
+specs-unit:
+  Просмотры:
+    - assert: При появлении карточки товара в видимой области экрана отправляется событие просмотра
+      description: POST /interactions/views — батч, отправляется при скролле ленты и каталога
+    - assert: Повторный скролл к той же карточке не отправляет дубликат в рамках одной сессии
+    - assert: Просмотры буферизуются и отправляются батчем
+
+  Клик по карточке:
+    - assert: При переходе на экран деталей товара отправляется событие клика
+      description: POST /interactions/click с itemId
+
+  Контакты:
+    - assert: При раскрытии секции контактов на экране деталей отправляется событие show-contacts
+      description: POST /interactions/show-contacts
+    - assert: При тапе на конкретный контакт (телефон, email, ссылка) отправляется событие contact-click
+      description: POST /interactions/contact-click с contactIndex и contactType
+
+  Надёжность:
+    - assert: Ошибки отправки событий не блокируют UI и не показывают ошибки пользователю
+    - assert: События отправляются fire-and-forget, без retry
+
+definitions:
+  feature:
+    - discovery
+  section:
+    - mobile

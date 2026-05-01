@@ -19,6 +19,7 @@ export function ItemCardLayout({
   owner,
   likeButton,
   onPress,
+  testID,
 }: {
   media: ReactNode;
   title: ReactNode;
@@ -27,9 +28,11 @@ export function ItemCardLayout({
   owner?: ReactNode;
   likeButton?: ReactNode;
   onPress?: () => void;
+  testID?: string;
 }) {
   return (
     <TouchableOpacity
+      testID={testID}
       activeOpacity={0.8}
       onPress={onPress}
       className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm"

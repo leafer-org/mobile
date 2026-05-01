@@ -55,7 +55,7 @@ export function ItemList({
 
   if (items.length === 0) {
     return (
-      <View className="flex-1 items-center justify-center py-20 px-6">
+      <View testID="item-list-empty" className="flex-1 items-center justify-center py-20 px-6">
         <Text variant="h3" className="text-center">
           Пока нет услуг
         </Text>

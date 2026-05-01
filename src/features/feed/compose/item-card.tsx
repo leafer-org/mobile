@@ -24,6 +24,7 @@ export function ItemCard({
 
   return (
     <ItemCardLayout
+      testID={`item-card-${item.itemId}`}
       onPress={() => router.push({ pathname: '/(app)/items/[itemId]', params: { itemId: item.itemId } })}
       media={
         <MediaCarousel
