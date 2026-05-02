@@ -12,7 +12,7 @@ export default function ErrorScreen() {
   };
 
   return (
-    <View className="flex-1 items-center justify-center bg-white dark:bg-slate-900 px-6">
+    <View className="flex-1 items-center justify-center bg-white dark:bg-stone-900 px-6">
       <View className="items-center gap-6">
         <View className="items-center gap-2">
           <Text variant="h1" className="text-center">
@@ -21,7 +21,7 @@ export default function ErrorScreen() {
           <Text variant="h2" className="text-center">
             Что-то случилось
           </Text>
-          <Text variant="body" className="text-center text-slate-600 dark:text-slate-400">
+          <Text variant="body" className="text-center text-stone-600 dark:text-stone-400">
             Произошла непредвиденная ошибка
           </Text>
         </View>

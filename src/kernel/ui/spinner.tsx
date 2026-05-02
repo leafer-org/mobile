@@ -16,7 +16,7 @@ export function Spinner({
 }) {
   return (
     <View className={cn('items-center justify-center gap-3', className)} {...props}>
-      <ActivityIndicator size={size} color={color ?? '#0d9488'} />
+      <ActivityIndicator size={size} color={color ?? '#a8a29e'} />
       {text && <Text variant="body">{text}</Text>}
     </View>
   );

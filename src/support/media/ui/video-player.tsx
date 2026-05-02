@@ -32,11 +32,11 @@ export function VideoPlayer({ preview, width, height, isActive }: Props) {
 
   if (!isReady) {
     return (
-      <View className="bg-slate-800 items-center justify-center" style={{ width, height }}>
+      <View className="bg-stone-800 items-center justify-center" style={{ width, height }}>
         {preview?.thumbnailUrl ? (
           <Image source={{ uri: preview.thumbnailUrl }} style={{ width, height }} resizeMode="cover" />
         ) : (
-          <Ionicons name="videocam-outline" size={48} color="#94a3b8" />
+          <Ionicons name="videocam-outline" size={48} color="#a8a29e" />
         )}
       </View>
     );

@@ -50,21 +50,21 @@ export function OtpInput({
                 key={index}
                 className={cn(
                   'flex-1 aspect-square items-center justify-center rounded-2xl border-2',
-                  'bg-white dark:bg-slate-800',
-                  !error && !isActive && !isFilled && 'border-slate-300 dark:border-slate-600',
+                  'bg-white dark:bg-stone-800',
+                  !error && !isActive && !isFilled && 'border-stone-300 dark:border-stone-600',
                   !error &&
                     isActive &&
-                    'border-teal-600 dark:border-teal-400 bg-teal-50 dark:bg-teal-950',
-                  !error && isFilled && !isActive && 'border-teal-600 dark:border-teal-400',
+                    'border-stone-900 dark:border-white bg-stone-100 dark:bg-stone-800',
+                  !error && isFilled && !isActive && 'border-stone-900 dark:border-white',
                   error && 'border-red-600 dark:border-red-400',
                 )}
               >
                 {isFilled ? (
-                  <Text variant="h1" className="text-slate-900 dark:text-white">
+                  <Text variant="h1" className="text-stone-900 dark:text-white">
                     {digit}
                   </Text>
                 ) : (
-                  <Text variant="h1" className="text-slate-300 dark:text-slate-600">
+                  <Text variant="h1" className="text-stone-300 dark:text-stone-600">
                     •
                   </Text>
                 )}

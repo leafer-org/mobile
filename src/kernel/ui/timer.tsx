@@ -50,7 +50,7 @@ export function Timer({
   };
 
   return (
-    <RNText className={cn('text-teal-600 dark:text-teal-400 font-mono font-semibold', className)}>
+    <RNText className={cn('text-stone-900 dark:text-white font-mono font-semibold', className)}>
       {formatTime(seconds)}
     </RNText>
   );

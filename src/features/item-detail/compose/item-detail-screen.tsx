@@ -16,22 +16,22 @@ export function ItemDetailScreen({ itemId }: { itemId: string }) {
 
   if (isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-white dark:bg-slate-900">
-        <ActivityIndicator size="large" color="#0d9488" />
+      <View className="flex-1 items-center justify-center bg-white dark:bg-stone-900">
+        <ActivityIndicator size="large" color={'#a8a29e'} />
       </View>
     );
   }
 
   if (isError || !data) {
     return (
-      <View className="flex-1 items-center justify-center bg-white dark:bg-slate-900 px-6">
+      <View className="flex-1 items-center justify-center bg-white dark:bg-stone-900 px-6">
         <Text variant="h3">Товар не найден</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView className="flex-1 bg-white dark:bg-slate-900">
+    <ScrollView className="flex-1 bg-white dark:bg-stone-900">
       <View className="gap-4 pb-8">
         {data.widgets.map((widget, i) => (
           <WidgetRenderer key={i} widget={widget} />

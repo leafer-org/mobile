@@ -14,7 +14,7 @@ export function OwnerWidget({
       {avatarUrl ? (
         <Image source={{ uri: avatarUrl }} className="w-10 h-10 rounded-full" />
       ) : (
-        <View className="w-10 h-10 rounded-full bg-teal-500 items-center justify-center">
+        <View className="w-10 h-10 rounded-full bg-[#FF7F50] items-center justify-center">
           <Text className="text-white font-semibold">{name[0]?.toUpperCase()}</Text>
         </View>
       )}

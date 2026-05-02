@@ -29,7 +29,7 @@ export function MediaCarousel({
   if (media.length === 0) {
     return (
       <View
-        className="bg-slate-200 dark:bg-slate-700 items-center justify-center"
+        className="bg-stone-200 dark:bg-stone-700 items-center justify-center"
         style={{ width, height }}
       />
     );
@@ -86,5 +86,5 @@ function MediaSlide({
     return <VideoPlayer preview={item.preview} width={width} height={height} isActive={isActive} />;
   }
 
-  return <View className="bg-slate-200 dark:bg-slate-700" style={{ width, height }} />;
+  return <View className="bg-stone-200 dark:bg-stone-700" style={{ width, height }} />;
 }

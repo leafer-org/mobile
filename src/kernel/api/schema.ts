@@ -240,8 +240,8 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Получение схемы разрешений
-     * @description Возвращает схему всех доступных разрешений для построения UI.
+     * Каталог пермишенов и групп
+     * @description Возвращает список групп пермишенов с описанием для построения UI редактирования ролей.
      */
     get: operations['getPermissionsSchema'];
     put?: never;
@@ -1685,6 +1685,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/admin/boards/my': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Мои доски (где текущий пользователь — участник) */
+    get: operations['getAdminMyBoards'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/admin/boards/{boardId}': {
     parameters: {
       query?: never;
@@ -1692,7 +1709,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get?: never;
+    /** Детали доски */
+    get: operations['getAdminBoardDetail'];
     put?: never;
     post?: never;
     /** Удаление доски */
@@ -1805,6 +1823,74 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/admin/boards/{boardId}/close-subscriptions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Добавление подписки закрытия */
+    post: operations['addAdminBoardCloseSubscription'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/admin/boards/{boardId}/close-subscriptions/{subId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Удаление подписки закрытия */
+    delete: operations['removeAdminBoardCloseSubscription'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/admin/boards/{boardId}/redirect-subscriptions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Добавление подписки перенаправления */
+    post: operations['addAdminBoardRedirectSubscription'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/admin/boards/{boardId}/redirect-subscriptions/{subId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Удаление подписки перенаправления */
+    delete: operations['removeAdminBoardRedirectSubscription'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/admin/tickets': {
     parameters: {
       query?: never;
@@ -1834,6 +1920,23 @@ export interface paths {
     get: operations['getAdminMyTickets'];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/admin/tickets/unassign-all': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Снять назначение со всех своих тикетов */
+    post: operations['unassignAllAdminTickets'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1976,6 +2079,31 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/admin/boards/{boardId}/stream': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * SSE-стрим изменений тикетов доски
+     * @description Server-Sent Events. Соединение остаётся открытым; сервер шлёт события вида
+     *     `event: ticket.<action>` + `data: <json>` (см. TicketRealtimeEvent ниже).
+     *     Каждые 15 секунд — heartbeat-комментарий `: keepalive`. Last-Event-ID
+     *     не используется — догона нет, на разрыв клиент переподключается и делает
+     *     обычный refetch GET /admin/tickets?boardId=.
+     *
+     */
+    get: operations['getAdminBoardStream'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/admin/boards/triggers': {
     parameters: {
       query?: never;
@@ -1985,6 +2113,23 @@ export interface paths {
     };
     /** Справочник триггеров */
     get: operations['getAdminTicketTriggers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/admin/boards/filters': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Справочник фильтров */
+    get: operations['getAdminTicketFilters'];
     put?: never;
     post?: never;
     delete?: never;
@@ -2107,14 +2252,22 @@ export interface components {
       /** Format: uuid */
       id: string;
       name: string;
-      permissions: {
-        [key: string]: unknown;
-      };
+      permissions: string[];
       isStatic: boolean;
       /** Format: date-time */
       createdAt: string;
       /** Format: date-time */
       updatedAt: string;
+    };
+    PermissionItem: {
+      id: string;
+      title: string;
+      description: string;
+    };
+    PermissionGroup: {
+      id: string;
+      title: string;
+      permissions: components['schemas']['PermissionItem'][];
     };
     UploadRequest: {
       name: string;
@@ -2226,7 +2379,7 @@ export interface components {
     CategoryListItem: {
       categoryId: string;
       name: string;
-      iconId: string;
+      iconUrl: string;
       childCount: number;
       itemCount: number;
     };
@@ -2907,15 +3060,23 @@ export interface components {
       | {
           /** @enum {string} */
           type: SubscriptionFilterType;
-          filterId: string;
-          params: {
-            [key: string]: unknown;
-          };
+          n: number;
+        }
+      | {
+          /** @enum {string} */
+          type: SubscriptionFilterType;
+          percent: number;
         };
     BoardSubscription: {
       id: string;
       triggerId: string;
       filters: components['schemas']['SubscriptionFilter'][];
+    };
+    BoardMember: {
+      userId: string;
+      fullName: string;
+      phone: string;
+      role: string;
     };
     BoardAutomation: {
       id: string;
@@ -2926,10 +3087,19 @@ export interface components {
         moveToBoardId: string | null;
       };
     };
-    CloseTrigger: {
-      /** @enum {string} */
-      type: CloseTriggerType;
+    CloseSubscription: {
+      id: string;
+      triggerId: string;
+      filters: components['schemas']['SubscriptionFilter'][];
       addComment: boolean;
+    };
+    RedirectSubscription: {
+      id: string;
+      triggerId: string;
+      filters: components['schemas']['SubscriptionFilter'][];
+      targetBoardId: string;
+      addComment: boolean;
+      commentTemplate: string;
     };
     BoardDetail: {
       boardId: string;
@@ -2942,21 +3112,10 @@ export interface components {
       subscriptions: components['schemas']['BoardSubscription'][];
       allowedTransferBoardIds: string[];
       memberIds: string[];
+      members?: components['schemas']['BoardMember'][];
       automations: components['schemas']['BoardAutomation'][];
-      closeTrigger?: null | components['schemas']['CloseTrigger'];
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    TicketListItem: {
-      ticketId: string;
-      boardId: string;
-      message: string;
-      triggerId?: string | null;
-      /** @enum {string} */
-      status: TicketListItemStatus;
-      assigneeId?: string | null;
+      closeSubscriptions?: components['schemas']['CloseSubscription'][];
+      redirectSubscriptions?: components['schemas']['RedirectSubscription'][];
       /** Format: date-time */
       createdAt: string;
       /** Format: date-time */
@@ -2977,6 +3136,37 @@ export interface components {
         name?: string;
         description?: string;
         avatarUrl?: string | null;
+      } | null;
+    };
+    TicketListItem: {
+      ticketId: string;
+      boardId: string;
+      message: string;
+      triggerId?: string | null;
+      /** @enum {string} */
+      status: TicketListItemStatus;
+      assigneeId?: string | null;
+      data?: components['schemas']['TicketData'];
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    TicketDataInput: {
+      item?: {
+        id?: string;
+        organizationId?: string;
+        typeId?: string;
+        title?: string;
+        description?: string;
+        imageId?: string | null;
+        categoryIds?: string[];
+      } | null;
+      organization?: {
+        id?: string;
+        name?: string;
+        description?: string;
+        avatarId?: string | null;
       } | null;
     };
     TicketHistoryEntry: {
@@ -3005,11 +3195,119 @@ export interface components {
       /** Format: date-time */
       updatedAt: string;
     };
+    TicketRealtimeCreatedEvent: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: TicketRealtimeCreatedEventType;
+      ticketId: string;
+      boardId: string;
+      triggerId: string | null;
+      createdBy: string;
+    };
+    TicketRealtimeAssignedEvent: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: TicketRealtimeAssignedEventType;
+      ticketId: string;
+      boardId: string;
+      assigneeId: string;
+    };
+    TicketRealtimeReassignedEvent: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: TicketRealtimeReassignedEventType;
+      ticketId: string;
+      boardId: string;
+      oldAssigneeId: string;
+      newAssigneeId: string;
+      reassignedBy: string;
+    };
+    TicketRealtimeUnassignedEvent: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: TicketRealtimeUnassignedEventType;
+      ticketId: string;
+      boardId: string;
+      oldAssigneeId: string;
+    };
+    TicketRealtimeDoneEvent: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: TicketRealtimeDoneEventType;
+      ticketId: string;
+      boardId: string;
+    };
+    TicketRealtimeReopenedEvent: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: TicketRealtimeReopenedEventType;
+      ticketId: string;
+      boardId: string;
+      reopenedBy: string;
+    };
+    TicketRealtimeCommentedEvent: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: TicketRealtimeCommentedEventType;
+      ticketId: string;
+      boardId: string;
+      authorId: string;
+    };
+    TicketRealtimeMovedEvent: {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: TicketRealtimeMovedEventType;
+      ticketId: string;
+      fromBoardId: string;
+      toBoardId: string;
+      movedBy: string;
+    };
+    /** @description Событие SSE-стрима /admin/boards/{boardId}/stream. На проводе — формат:
+     *     `event: <type>` + `data: <json фрагмент по type>`.
+     *     Discriminator — поле `type`.
+     *      */
+    TicketRealtimeEvent:
+      | components['schemas']['TicketRealtimeCreatedEvent']
+      | components['schemas']['TicketRealtimeAssignedEvent']
+      | components['schemas']['TicketRealtimeReassignedEvent']
+      | components['schemas']['TicketRealtimeUnassignedEvent']
+      | components['schemas']['TicketRealtimeDoneEvent']
+      | components['schemas']['TicketRealtimeReopenedEvent']
+      | components['schemas']['TicketRealtimeCommentedEvent']
+      | components['schemas']['TicketRealtimeMovedEvent'];
+    TriggerParam: {
+      key: string;
+      label: string;
+      /** @enum {string} */
+      type: TriggerParamType;
+    };
     TriggerInfo: {
       triggerId: string;
       name: string;
-      /** @enum {string} */
-      scope: TriggerInfoScope;
+      categories: TriggerInfoCategories[];
+      params: components['schemas']['TriggerParam'][];
+    };
+    FilterInfo: {
+      type: string;
+      name: string;
+      categories: FilterInfoCategories[];
+      params: components['schemas']['TriggerParam'][];
     };
   };
   responses: {
@@ -3501,9 +3799,7 @@ export interface operations {
         };
         content: {
           'application/json': {
-            permissions: {
-              [key: string]: unknown;
-            };
+            permissions: string[];
           };
         };
       };
@@ -3710,9 +4006,7 @@ export interface operations {
       content: {
         'application/json': {
           name: string;
-          permissions?: {
-            [key: string]: unknown;
-          };
+          permissions?: string[];
         };
       };
     };
@@ -3784,21 +4078,15 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description Схема разрешений */
+      /** @description Каталог пермишенов */
       200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
           'application/json': {
-            action: string;
-            key: string;
-            /** @enum {string} */
-            type: PathsRolesPermissionsSchemaGetResponses200ContentApplicationJsonType;
-            values?: string[];
-            default: unknown;
-            description?: string;
-          }[];
+            groups: components['schemas']['PermissionGroup'][];
+          };
         };
       };
       /** @description Нет доступа */
@@ -3958,9 +4246,7 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': {
-          permissions: {
-            [key: string]: unknown;
-          };
+          permissions: string[];
         };
       };
     };
@@ -8114,6 +8400,84 @@ export interface operations {
       };
     };
   };
+  getAdminMyBoards: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Список досок */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BoardListItem'][];
+        };
+      };
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  getAdminBoardDetail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        boardId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Детали доски */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BoardDetail'];
+        };
+      };
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Доска не найдена */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Внутренняя ошибка сервера */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OpenApiValidationError'];
+        };
+      };
+    };
+  };
   deleteAdminBoard: {
     parameters: {
       query?: never;
@@ -8177,7 +8541,6 @@ export interface operations {
           description?: string | null;
           manualCreation: boolean;
           allowedTransferBoardIds: string[];
-          closeTrigger?: null | components['schemas']['CloseTrigger'];
         };
       };
     };
@@ -8261,13 +8624,15 @@ export interface operations {
           };
         };
       };
-      /** @description Ошибка валидации */
+      /** @description Ошибка валидации / невалидный triggerId */
       400: {
         headers: {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['OpenApiValidationError'];
+          'application/json':
+            | components['schemas']['OpenApiValidationError']
+            | components['schemas']['DomainErrorResponse'];
         };
       };
       /** @description Нет доступа */
@@ -8359,7 +8724,7 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': {
-          userId: string;
+          phone: string;
         };
       };
     };
@@ -8588,6 +8953,206 @@ export interface operations {
       };
     };
   };
+  addAdminBoardCloseSubscription: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        boardId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          triggerId: string;
+          filters: components['schemas']['SubscriptionFilter'][];
+          addComment: boolean;
+        };
+      };
+    };
+    responses: {
+      /** @description Подписка закрытия добавлена */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            boardId: string;
+            closeSubscriptions: components['schemas']['CloseSubscription'][];
+          };
+        };
+      };
+      /** @description Невалидный triggerId */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Доска не найдена */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  removeAdminBoardCloseSubscription: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        boardId: string;
+        subId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Подписка закрытия удалена */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Доска или подписка не найдена */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  addAdminBoardRedirectSubscription: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        boardId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          triggerId: string;
+          filters: components['schemas']['SubscriptionFilter'][];
+          targetBoardId: string;
+          addComment: boolean;
+          commentTemplate: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Подписка перенаправления добавлена */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            boardId: string;
+            redirectSubscriptions: components['schemas']['RedirectSubscription'][];
+          };
+        };
+      };
+      /** @description targetBoardId совпадает с текущей доской */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Доска или целевая доска не найдена */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
+  removeAdminBoardRedirectSubscription: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        boardId: string;
+        subId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Подписка перенаправления удалена */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Доска или подписка не найдена */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
   getAdminTickets: {
     parameters: {
       query?: {
@@ -8652,7 +9217,7 @@ export interface operations {
         'application/json': {
           boardId: string;
           message: string;
-          data?: components['schemas']['TicketData'];
+          data?: components['schemas']['TicketDataInput'];
         };
       };
     };
@@ -8739,6 +9304,42 @@ export interface operations {
             total: number;
           };
         };
+      };
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Внутренняя ошибка сервера */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OpenApiValidationError'];
+        };
+      };
+    };
+  };
+  unassignAllAdminTickets: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Все тикеты текущего пользователя сняты с назначения */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
       /** @description Нет доступа */
       403: {
@@ -9257,11 +9858,58 @@ export interface operations {
       };
     };
   };
+  getAdminBoardStream: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        boardId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description SSE-поток открыт */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/event-stream': components['schemas']['TicketRealtimeEvent'];
+        };
+      };
+      /** @description Не авторизован */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Нет прав или не участник доски */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Доска не найдена */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+    };
+  };
   getAdminTicketTriggers: {
     parameters: {
       query?: {
-        /** @description Фильтр по scope */
-        scope?: PathsAdminBoardsTriggersGetParametersQueryScope;
+        /** @description Фильтр по категории подписки */
+        category?: PathsAdminBoardsTriggersGetParametersQueryCategory;
       };
       header?: never;
       path?: never;
@@ -9278,6 +9926,49 @@ export interface operations {
           'application/json': components['schemas']['TriggerInfo'][];
         };
       };
+      401: components['responses']['UnauthorizedError'];
+      /** @description Нет доступа */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Внутренняя ошибка сервера */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OpenApiValidationError'];
+        };
+      };
+    };
+  };
+  getAdminTicketFilters: {
+    parameters: {
+      query?: {
+        /** @description Фильтр по категории подписки */
+        category?: PathsAdminBoardsFiltersGetParametersQueryCategory;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Список фильтров */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FilterInfo'][];
+        };
+      };
+      401: components['responses']['UnauthorizedError'];
       /** @description Нет доступа */
       403: {
         headers: {
@@ -9321,10 +10012,6 @@ export enum PathsAuthVerifyOtpPostResponses403ContentApplicationJsonType {
 export enum PathsRolesPostResponses400ContentApplicationJsonType {
   role_already_exists = 'role_already_exists',
   invalid_permissions = 'invalid_permissions',
-}
-export enum PathsRolesPermissionsSchemaGetResponses200ContentApplicationJsonType {
-  boolean = 'boolean',
-  enum = 'enum',
 }
 export enum PathsCategoriesIdItemsGetParametersQuerySort {
   personal = 'personal',
@@ -9416,9 +10103,15 @@ export enum PathsAdminTicketsTicketIdCommentsPostResponses200ContentApplicationJ
   in_progress = 'in-progress',
   done = 'done',
 }
-export enum PathsAdminBoardsTriggersGetParametersQueryScope {
-  platform = 'platform',
-  organization = 'organization',
+export enum PathsAdminBoardsTriggersGetParametersQueryCategory {
+  open = 'open',
+  close = 'close',
+  redirect = 'redirect',
+}
+export enum PathsAdminBoardsFiltersGetParametersQueryCategory {
+  open = 'open',
+  close = 'close',
+  redirect = 'redirect',
 }
 export enum ThrottledErrorResponseType {
   throttled = 'throttled',
@@ -9693,10 +10386,10 @@ export enum SubscriptionFilterType {
   json_logic = 'json-logic',
 }
 export enum SubscriptionFilterType {
-  programmatic = 'programmatic',
+  every_nth = 'every-nth',
 }
-export enum CloseTriggerType {
-  on_moderation_resolved = 'on-moderation-resolved',
+export enum SubscriptionFilterType {
+  random_sample = 'random-sample',
 }
 export enum BoardDetailScope {
   platform = 'platform',
@@ -9722,7 +10415,41 @@ export enum TicketDetailStatus {
   in_progress = 'in-progress',
   done = 'done',
 }
-export enum TriggerInfoScope {
-  platform = 'platform',
-  organization = 'organization',
+export enum TicketRealtimeCreatedEventType {
+  TicketRealtimeCreatedEvent = 'TicketRealtimeCreatedEvent',
+}
+export enum TicketRealtimeAssignedEventType {
+  TicketRealtimeAssignedEvent = 'TicketRealtimeAssignedEvent',
+}
+export enum TicketRealtimeReassignedEventType {
+  TicketRealtimeReassignedEvent = 'TicketRealtimeReassignedEvent',
+}
+export enum TicketRealtimeUnassignedEventType {
+  TicketRealtimeUnassignedEvent = 'TicketRealtimeUnassignedEvent',
+}
+export enum TicketRealtimeDoneEventType {
+  TicketRealtimeDoneEvent = 'TicketRealtimeDoneEvent',
+}
+export enum TicketRealtimeReopenedEventType {
+  TicketRealtimeReopenedEvent = 'TicketRealtimeReopenedEvent',
+}
+export enum TicketRealtimeCommentedEventType {
+  TicketRealtimeCommentedEvent = 'TicketRealtimeCommentedEvent',
+}
+export enum TicketRealtimeMovedEventType {
+  TicketRealtimeMovedEvent = 'TicketRealtimeMovedEvent',
+}
+export enum TriggerParamType {
+  number = 'number',
+  string = 'string',
+}
+export enum TriggerInfoCategories {
+  open = 'open',
+  close = 'close',
+  redirect = 'redirect',
+}
+export enum FilterInfoCategories {
+  open = 'open',
+  close = 'close',
+  redirect = 'redirect',
 }

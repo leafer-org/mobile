@@ -7,7 +7,7 @@ import { Text } from '@/kernel/ui/text';
 
 function SuspenseFallback() {
   return (
-    <View className="flex-1 items-center justify-center bg-white dark:bg-slate-900 px-6 gap-4">
+    <View className="flex-1 items-center justify-center bg-white dark:bg-stone-900 px-6 gap-4">
       <Spinner size="large" />
       <Text variant="body">Загрузка...</Text>
     </View>
@@ -22,7 +22,7 @@ export default function AppLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: isDark ? '#0f172a' : '#ffffff' },
+          contentStyle: { backgroundColor: isDark ? '#1c1917' : '#ffffff' },
         }}
       >
         <Stack.Screen name="(tabs)" />
@@ -32,15 +32,8 @@ export default function AppLayout() {
             headerShown: true,
             headerTitle: '',
             headerBackTitle: 'Назад',
-            headerTintColor: '#0d9488',
-            headerStyle: { backgroundColor: isDark ? '#0f172a' : '#ffffff' },
-            animation: 'slide_from_right',
-          }}
-        />
-        <Stack.Screen
-          name="category/[categoryId]"
-          options={{
-            headerShown: false,
+            headerTintColor: isDark ? '#ffffff' : '#1c1917',
+            headerStyle: { backgroundColor: isDark ? '#1c1917' : '#ffffff' },
             animation: 'slide_from_right',
           }}
         />

@@ -8,7 +8,7 @@ export function LocationWidget({ address }: { address?: string | null }) {
 
   return (
     <View className="px-4 flex-row items-center gap-2">
-      <Ionicons name="location-outline" size={16} color="#0d9488" />
+      <Ionicons name="location-outline" size={16} color={'#a8a29e'} />
       <Text variant="body">{address}</Text>
     </View>
   );

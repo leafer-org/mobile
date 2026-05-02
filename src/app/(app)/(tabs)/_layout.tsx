@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
+import { Tabs, router } from 'expo-router';
 import { useColorScheme } from 'react-native';
 
 export default function TabsLayout() {
@@ -10,12 +10,12 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#0d9488',
-        tabBarInactiveTintColor: isDark ? '#64748b' : '#94a3b8',
+        tabBarActiveTintColor: isDark ? '#ffffff' : '#1c1917',
+        tabBarInactiveTintColor: isDark ? '#78716c' : '#a8a29e',
         tabBarStyle: {
-          backgroundColor: isDark ? '#0f172a' : '#ffffff',
+          backgroundColor: isDark ? '#1c1917' : '#ffffff',
           borderTopWidth: 0.5,
-          borderTopColor: isDark ? '#1e293b' : '#e2e8f0',
+          borderTopColor: isDark ? '#292524' : '#e7e5e4',
         },
       }}
     >
@@ -32,6 +32,13 @@ export default function TabsLayout() {
           title: 'Каталог',
           tabBarIcon: ({ color, size }) => <Ionicons name="grid-outline" size={size} color={color} />,
         }}
+        listeners={({ navigation }) => ({
+          tabPress: () => {
+            if (navigation.isFocused()) {
+              router.replace('/catalog');
+            }
+          },
+        })}
       />
       <Tabs.Screen
         name="favorites"

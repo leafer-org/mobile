@@ -1,13 +1,16 @@
+import type { Avatar } from '@/kernel/ui/avatar';
+import { Button } from '@/kernel/ui/button';
+import { ScreenLayout } from '@/kernel/ui/screen-layout';
+import { CityPicker, useCity } from '@/support/city';
+
 import { useAvatarPreview } from '../model/use-avatar-preview';
 import { useProfileFullName } from '../model/use-profile-full-name';
 import { useUpdateProfile } from '../model/use-update-profile';
 import { useUploadAvatar } from '../model/use-upload-avatar';
 import { AvatarEditSection } from '../ui/avatar-edit-section';
 import { FullNameInput } from '../ui/full-name-input';
+import { ProfileCitySection } from '../ui/profile-city-section';
 import { ProfileEditLayout } from '../ui/profile-edit-layout';
-import type { Avatar } from '@/kernel/ui/avatar';
-import { Button } from '@/kernel/ui/button';
-import { ScreenLayout } from '@/kernel/ui/screen-layout';
 
 export function ProfileEditScreen({
   currentFullName,
@@ -21,6 +24,7 @@ export function ProfileEditScreen({
   const fullNameField = useProfileFullName(currentFullName ?? '');
   const uploadAvatar = useUploadAvatar();
   const avatarPreview = useAvatarPreview({ fileId: uploadAvatar.uploadedFileId });
+  const { cityId, cityName, setCity } = useCity();
 
   const updateProfile = useUpdateProfile({ onSuccess });
 
@@ -55,6 +59,17 @@ export function ProfileEditScreen({
             onSubmitEditing={handleSubmit}
             error={updateProfile.error?.message}
             disabled={loading}
+          />
+        }
+        citySection={
+          <ProfileCitySection
+            picker={
+              <CityPicker
+                cityId={cityId}
+                cityName={cityName}
+                onSelect={setCity}
+              />
+            }
           />
         }
         actions={

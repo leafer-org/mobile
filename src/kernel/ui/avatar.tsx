@@ -19,7 +19,7 @@ const textSizeClasses = {
 
 // Палитра цветов для fallback аватаров
 const fallbackColors = [
-  'bg-teal-500',
+  'bg-[#FF7F50]',
   'bg-blue-500',
   'bg-purple-500',
   'bg-pink-500',

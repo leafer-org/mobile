@@ -22,7 +22,7 @@ export function ScreenLayout({
 
   return (
     <Container
-      className={cn('flex-1 bg-white dark:bg-slate-900', className)}
+      className={cn('flex-1 bg-white dark:bg-stone-900', className)}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
     >

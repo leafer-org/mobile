@@ -1,2 +1,3 @@
-export { CatalogScreen } from './compose/catalog-screen';
-export { CategoryItemsScreen } from './compose/category-items-screen';
+export { CatalogScreen, CategoryItemsScreen } from './_catalog';
+export { LikedItemsScreen } from './_favorites';
+export { FeedScreen, FeedPreview } from './_feed';

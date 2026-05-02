@@ -25,7 +25,7 @@ export function TextInput({
         value={value}
         onChangeText={onChangeText}
         className={textClasses}
-        placeholderTextColor="#94a3b8"
+        placeholderTextColor="#a8a29e"
         onFocus={(e) => {
           setIsFocused(true);
           props.onFocus?.(e);

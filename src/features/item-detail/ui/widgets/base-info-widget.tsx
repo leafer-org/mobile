@@ -21,7 +21,7 @@ export function BaseInfoWidget({
       )}
       <View className="px-4 gap-1">
         <Text variant="h2">{title}</Text>
-        {description ? <Text variant="body" className="text-slate-600 dark:text-slate-300">{description}</Text> : null}
+        {description ? <Text variant="body" className="text-stone-600 dark:text-stone-300">{description}</Text> : null}
       </View>
     </View>
   );

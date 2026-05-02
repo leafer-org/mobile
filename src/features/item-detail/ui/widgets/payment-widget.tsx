@@ -18,7 +18,7 @@ export function PaymentWidget({ options }: { options: PaymentOption[] }) {
       {options.map((opt, i) => (
         <View key={i} className="flex-row items-center justify-between">
           <Text variant="body">{opt.name}</Text>
-          <Text className="font-semibold text-slate-900 dark:text-white">
+          <Text className="font-semibold text-stone-900 dark:text-white">
             {opt.strategy === 'free'
               ? 'Бесплатно'
               : opt.price != null

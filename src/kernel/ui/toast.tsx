@@ -9,7 +9,7 @@ type ToastVariant = 'success' | 'error' | 'info' | 'warning';
 const variantClasses: Record<ToastVariant, string> = {
   success: 'bg-green-600 dark:bg-green-500',
   error: 'bg-red-600 dark:bg-red-500',
-  info: 'bg-teal-600 dark:bg-teal-500',
+  info: 'bg-stone-900 dark:bg-white',
   warning: 'bg-orange-600 dark:bg-orange-500',
 };
 

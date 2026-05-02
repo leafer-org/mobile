@@ -51,18 +51,18 @@ function CityItem({
       <View
         className={cn(
           'flex-row items-center rounded-xl px-4 py-3',
-          selected ? 'bg-teal-50 dark:bg-teal-950' : 'bg-transparent',
+          selected ? 'bg-stone-100 dark:bg-stone-800' : 'bg-transparent',
         )}
       >
         <View
           className={cn(
             'mr-3 h-5 w-5 items-center justify-center rounded-full border-2',
             selected
-              ? 'border-teal-600 dark:border-teal-400'
-              : 'border-slate-300 dark:border-slate-600',
+              ? 'border-stone-900 dark:border-white'
+              : 'border-stone-300 dark:border-stone-600',
           )}
         >
-          {selected && <View className="h-2.5 w-2.5 rounded-full bg-teal-600 dark:bg-teal-400" />}
+          {selected && <View className="h-2.5 w-2.5 rounded-full bg-stone-900 dark:bg-white" />}
         </View>
         <Text variant="body">{city.name}</Text>
       </View>

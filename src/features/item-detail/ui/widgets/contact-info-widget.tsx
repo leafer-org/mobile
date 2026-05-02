@@ -25,8 +25,8 @@ export function ContactInfoWidget({ contacts }: { contacts: Contact[] }) {
       <Text variant="label">Контакты</Text>
       {contacts.map((c, i) => (
         <TouchableOpacity key={i} onPress={() => handlePress(c)} className="flex-row items-center gap-2">
-          <Ionicons name={ICON_MAP[c.type] ?? 'link-outline'} size={16} color="#0d9488" />
-          <Text className="text-teal-600 dark:text-teal-400">{c.label || c.value}</Text>
+          <Ionicons name={ICON_MAP[c.type] ?? 'link-outline'} size={16} color={'#a8a29e'} />
+          <Text className="text-stone-900 dark:text-white">{c.label || c.value}</Text>
         </TouchableOpacity>
       ))}
     </View>

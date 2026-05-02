@@ -1,4 +1,4 @@
-import { LikedItemsScreen } from '@/features/feed';
+import { LikedItemsScreen } from '@/features/discovery';
 
 export default function FavoritesScreenRoute() {
   return <LikedItemsScreen />;

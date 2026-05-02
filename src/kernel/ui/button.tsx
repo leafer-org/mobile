@@ -7,11 +7,11 @@ type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-teal-600 active:bg-teal-700 dark:bg-teal-500 dark:active:bg-teal-600',
-  secondary: 'bg-slate-200 active:bg-slate-300 dark:bg-slate-700 dark:active:bg-slate-600',
+  primary: 'bg-stone-900 active:bg-stone-700 dark:bg-white dark:active:bg-stone-200',
+  secondary: 'bg-stone-200 active:bg-stone-300 dark:bg-stone-700 dark:active:bg-stone-600',
   outline:
-    'bg-transparent border-2 border-teal-600 active:bg-teal-50 dark:border-teal-400 dark:active:bg-teal-950',
-  ghost: 'bg-transparent active:bg-slate-100 dark:active:bg-slate-800',
+    'bg-transparent border-2 border-stone-900 active:bg-stone-100 dark:border-white dark:active:bg-stone-800',
+  ghost: 'bg-transparent active:bg-stone-100 dark:active:bg-stone-800',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -21,10 +21,10 @@ const sizeClasses: Record<ButtonSize, string> = {
 };
 
 const textVariantClasses: Record<ButtonVariant, string> = {
-  primary: 'text-white font-semibold',
-  secondary: 'text-slate-900 dark:text-white font-semibold',
-  outline: 'text-teal-600 dark:text-teal-400 font-semibold',
-  ghost: 'text-teal-600 dark:text-teal-400 font-medium',
+  primary: 'text-white dark:text-stone-900 font-semibold',
+  secondary: 'text-stone-900 dark:text-white font-semibold',
+  outline: 'text-stone-900 dark:text-white font-semibold',
+  ghost: 'text-stone-900 dark:text-white font-medium',
 };
 
 const textSizeClasses: Record<ButtonSize, string> = {
@@ -67,7 +67,7 @@ export function Button({
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? 'white' : '#0d9488'} />
+        <ActivityIndicator color={variant === 'primary' ? 'white' : '#1c1917'} />
       ) : (
         <Text className={textClasses}>{children}</Text>
       )}
