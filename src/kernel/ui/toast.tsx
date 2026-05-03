@@ -86,11 +86,11 @@ export function Toast({
         opacity,
         transform: [{ translateY }],
       }}
-      className={cn('absolute top-12 left-4 right-4 z-50 rounded-xl shadow-lg', className)}
+      className={cn('absolute top-12 left-4 right-4 z-50 rounded-lg shadow-lg', className)}
       {...props}
     >
       <Pressable onPress={onDismiss}>
-        <View className={cn('px-4 py-3 rounded-xl', variantClasses[variant])}>
+        <View className={cn('px-4 py-3 rounded-lg', variantClasses[variant])}>
           <Text className="text-white font-medium text-center">{message}</Text>
         </View>
       </Pressable>

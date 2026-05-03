@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { TextInputProps } from 'react-native';
-import { View } from 'react-native';
 import MaskInput from 'react-native-mask-input';
 
 import { useInputStyles } from './input-base';
@@ -16,7 +15,7 @@ export function PhoneInput({
 }) {
   const [isFocused, setIsFocused] = useState(false);
 
-  const { containerClasses, textClasses } = useInputStyles({
+  const { inputClasses } = useInputStyles({
     isFocused,
     error: error ? 'error' : undefined,
     editable: props.editable,
@@ -27,43 +26,41 @@ export function PhoneInput({
   };
 
   return (
-    <View className={containerClasses}>
-      <MaskInput
-        value={value}
-        onChangeText={handleMaskedChangeText}
-        mask={[
-          '+',
-          '7',
-          ' ',
-          '(',
-          /\d/,
-          /\d/,
-          /\d/,
-          ')',
-          ' ',
-          /\d/,
-          /\d/,
-          /\d/,
-          '-',
-          /\d/,
-          /\d/,
-          '-',
-          /\d/,
-          /\d/,
-        ]}
-        keyboardType="phone-pad"
-        className={textClasses}
-        placeholderTextColor="#a8a29e"
-        onFocus={(e) => {
-          setIsFocused(true);
-          props.onFocus?.(e);
-        }}
-        onBlur={(e) => {
-          setIsFocused(false);
-          props.onBlur?.(e);
-        }}
-        {...props}
-      />
-    </View>
+    <MaskInput
+      value={value}
+      onChangeText={handleMaskedChangeText}
+      mask={[
+        '+',
+        '7',
+        ' ',
+        '(',
+        /\d/,
+        /\d/,
+        /\d/,
+        ')',
+        ' ',
+        /\d/,
+        /\d/,
+        /\d/,
+        '-',
+        /\d/,
+        /\d/,
+        '-',
+        /\d/,
+        /\d/,
+      ]}
+      keyboardType="phone-pad"
+      className={inputClasses}
+      placeholderTextColor="#a8a29e"
+      onFocus={(e) => {
+        setIsFocused(true);
+        props.onFocus?.(e);
+      }}
+      onBlur={(e) => {
+        setIsFocused(false);
+        props.onBlur?.(e);
+      }}
+      {...props}
+    />
   );
 }

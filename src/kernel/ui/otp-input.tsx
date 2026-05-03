@@ -49,7 +49,7 @@ export function OtpInput({
                 // biome-ignore lint/suspicious/noArrayIndexKey: Здесь можно использовать index как ключ
                 key={index}
                 className={cn(
-                  'flex-1 aspect-square items-center justify-center rounded-2xl border-2',
+                  'flex-1 aspect-square items-center justify-center rounded-lg border',
                   'bg-white dark:bg-stone-800',
                   !error && !isActive && !isFilled && 'border-stone-300 dark:border-stone-600',
                   !error &&
