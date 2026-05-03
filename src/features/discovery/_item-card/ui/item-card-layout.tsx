@@ -42,13 +42,13 @@ export function ItemCardLayout({
         {likeButton}
       </View>
       <View className="px-2 pt-2.5 gap-1.5">
+        {owner}
         {ageGroup}
         {title}
         {whenLabel}
         {price}
         {rating}
         {address}
-        {owner}
       </View>
     </TouchableOpacity>
   );
