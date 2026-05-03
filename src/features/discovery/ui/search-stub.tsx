@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { TouchableOpacity, useColorScheme } from 'react-native';
 
 import { Text } from '@/kernel/ui/text';
@@ -9,11 +10,13 @@ type Props = {
 
 export function SearchStub({ placeholder = 'Поиск' }: Props) {
   const isDark = useColorScheme() === 'dark';
+  const router = useRouter();
 
   return (
     <TouchableOpacity
       testID="search-stub"
       activeOpacity={0.7}
+      onPress={() => router.push('/search' as never)}
       className="flex-row items-center gap-2 bg-stone-100 dark:bg-stone-800 rounded-xl px-3 py-2"
     >
       <Ionicons

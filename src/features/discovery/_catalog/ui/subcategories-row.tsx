@@ -1,6 +1,6 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Menu } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { ScrollView, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
 
 import { Text } from '@/kernel/ui/text';
 
@@ -15,7 +15,6 @@ type Props = {
 
 export function SubcategoriesRow({ subcategories, parentBreadcrumbs }: Props) {
   const router = useRouter();
-  const isDark = useColorScheme() === 'dark';
 
   if (subcategories.length === 0) return null;
 
@@ -31,10 +30,13 @@ export function SubcategoriesRow({ subcategories, parentBreadcrumbs }: Props) {
           testID="subcategory-all"
           activeOpacity={0.7}
           onPress={() => router.dismiss(1)}
-          className="flex-row items-center gap-1 px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800"
+          className="flex-row items-center gap-1 px-3 py-1.5 rounded-md bg-white"
         >
-          <Ionicons name="menu-outline" size={14} color={isDark ? '#a8a29e' : '#78716c'} />
-          <Text className="text-sm text-stone-900 dark:text-white">
+          <Menu size={12} color="#1c1917" strokeWidth={1.5} />
+          <Text
+            className="text-xs text-stone-900 dark:text-stone-900"
+            style={{ includeFontPadding: false, transform: [{ translateY: -1 }] }}
+          >
             Все
           </Text>
         </TouchableOpacity>
@@ -57,9 +59,12 @@ export function SubcategoriesRow({ subcategories, parentBreadcrumbs }: Props) {
                 },
               })
             }
-            className="px-3 py-1.5 rounded-lg bg-white dark:bg-stone-800"
+            className="px-3 py-1.5 rounded-md bg-white"
           >
-            <Text className="text-sm text-stone-900 dark:text-white">
+            <Text
+              className="text-xs text-stone-900 dark:text-stone-900"
+              style={{ includeFontPadding: false, transform: [{ translateY: -1 }] }}
+            >
               {s.name}
             </Text>
           </TouchableOpacity>

@@ -3,17 +3,33 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useApiFetchClient } from '@/kernel/api/provider';
 
+export type AttributeFilter =
+  | { attributeId: string; type: 'enum'; values: string[] }
+  | { attributeId: string; type: 'number'; min?: number; max?: number }
+  | { attributeId: string; type: 'boolean'; value: boolean }
+  | { attributeId: string; type: 'text'; value: string };
+
 export type CategoryItemsFilters = {
-  cityId?: string;
-  ageGroup?: string;
-  typeIds?: string;
+  typeIds: string[];
   priceMin?: number;
   priceMax?: number;
   minRating?: number;
-  attributeValues?: string;
+  attributeFilters: AttributeFilter[];
   lat?: number;
   lng?: number;
   radiusKm?: number;
+  dateFrom?: string;
+  dateTo?: string;
+  scheduleDayOfWeek?: number;
+  scheduleTimeFrom?: string;
+  scheduleTimeTo?: string;
+};
+
+export type PanelFilters = Omit<CategoryItemsFilters, 'typeIds'>;
+
+const INITIAL_FILTERS: CategoryItemsFilters = {
+  typeIds: [],
+  attributeFilters: [],
 };
 
 export function useCategoryFiltersQuery(categoryId: string) {
@@ -31,49 +47,58 @@ export function useCategoryFiltersQuery(categoryId: string) {
   });
 }
 
-const INITIAL_FILTERS: CategoryItemsFilters = {};
-
 export function useCategoryItemsFilters() {
   const [filters, setFilters] = useState<CategoryItemsFilters>(INITIAL_FILTERS);
 
   const toggleType = useCallback((typeId: string) => {
     setFilters((prev) => {
-      const current = prev.typeIds ? prev.typeIds.split(',') : [];
-      const next = current.includes(typeId)
-        ? current.filter((id) => id !== typeId)
-        : [...current, typeId];
-      return { ...prev, typeIds: next.length > 0 ? next.join(',') : undefined };
+      const next = prev.typeIds.includes(typeId)
+        ? prev.typeIds.filter((id) => id !== typeId)
+        : [...prev.typeIds, typeId];
+      return { ...prev, typeIds: next };
     });
   }, []);
 
-  const applyPanelFilters = useCallback(
-    (panel: Omit<CategoryItemsFilters, 'cityId' | 'ageGroup' | 'typeIds'>) => {
-      setFilters((prev) => ({ typeIds: prev.typeIds, ...panel }));
+  const applyPanelFilters = useCallback((panel: PanelFilters) => {
+    setFilters((prev) => ({ ...panel, typeIds: prev.typeIds }));
+  }, []);
+
+  const setPriceRange = useCallback(
+    (priceMin: number | undefined, priceMax: number | undefined) => {
+      setFilters((prev) => ({ ...prev, priceMin, priceMax }));
     },
     [],
   );
+
+  const setMinRating = useCallback((minRating: number | undefined) => {
+    setFilters((prev) => ({ ...prev, minRating }));
+  }, []);
 
   const reset = useCallback(() => {
     setFilters(INITIAL_FILTERS);
   }, []);
 
-  const selectedTypeIds = useMemo(
-    () => new Set(filters.typeIds ? filters.typeIds.split(',') : []),
-    [filters.typeIds],
-  );
+  const selectedTypeIds = useMemo(() => new Set(filters.typeIds), [filters.typeIds]);
 
   const hasModalFilters =
     filters.priceMin !== undefined ||
     filters.priceMax !== undefined ||
     filters.minRating !== undefined ||
-    filters.attributeValues !== undefined ||
-    filters.radiusKm !== undefined;
+    filters.attributeFilters.length > 0 ||
+    filters.radiusKm !== undefined ||
+    filters.dateFrom !== undefined ||
+    filters.dateTo !== undefined ||
+    filters.scheduleDayOfWeek !== undefined ||
+    filters.scheduleTimeFrom !== undefined ||
+    filters.scheduleTimeTo !== undefined;
 
   return {
     filters,
     toggleType,
     selectedTypeIds,
     applyPanelFilters,
+    setPriceRange,
+    setMinRating,
     reset,
     hasModalFilters,
   };

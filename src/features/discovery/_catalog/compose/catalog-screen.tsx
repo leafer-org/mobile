@@ -21,14 +21,7 @@ export function CatalogScreen({ feedSlot }: Props) {
 
   return (
     <DiscoveryScreenLayout
-      header={
-        <DiscoveryHeader
-          searchSlot={<SearchStub />}
-          ageGroupSlot={
-            <AgeGroupToggle value={ageGroup} onChange={setAgeGroup} />
-          }
-        />
-      }
+      header={<DiscoveryHeader searchSlot={<SearchStub />} />}
       body={
         <CatalogBody
           isLoading={isLoading}
@@ -44,6 +37,9 @@ export function CatalogScreen({ feedSlot }: Props) {
                 ]),
               },
             })
+          }
+          ageGroupSlot={
+            <AgeGroupToggle value={ageGroup} onChange={setAgeGroup} />
           }
           feedSlot={feedSlot}
         />

@@ -3,6 +3,8 @@ import { Image, View } from 'react-native';
 import type { ResolvedMediaItem } from '@/support/media';
 import { Text } from '@/kernel/ui/text';
 
+import { SectionHeader } from '../section-header';
+
 type TeamMember = {
   name: string;
   description?: string;
@@ -14,7 +16,7 @@ export function TeamWidget({ title, members }: { title: string; members: TeamMem
 
   return (
     <View className="px-4 gap-3">
-      <Text variant="label">{title}</Text>
+      <SectionHeader title={title} />
       {members.map((m, i) => (
         <View key={i} className="flex-row items-center gap-3">
           {m.media[0]?.type === 'image' && m.media[0].preview?.url ? (

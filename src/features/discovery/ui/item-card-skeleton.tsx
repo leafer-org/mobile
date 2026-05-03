@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Animated, View } from 'react-native';
 
-import { CARD_WIDTH, MEDIA_HEIGHT, ROW_GAP } from './grid';
+import { CARD_WIDTH, GRID_GAP, HORIZONTAL_PADDING, MEDIA_HEIGHT, ROW_GAP } from './grid';
 
 export function ItemCardSkeleton() {
   const opacity = useRef(new Animated.Value(0.3)).current;
@@ -36,7 +36,14 @@ export function ItemCardSkeleton() {
 
 export function ItemListSkeleton() {
   return (
-    <View className="flex-row flex-wrap gap-2 px-3 pt-2">
+    <View
+      className="flex-row flex-wrap"
+      style={{
+        paddingHorizontal: HORIZONTAL_PADDING,
+        paddingTop: 8,
+        gap: GRID_GAP,
+      }}
+    >
       {Array.from({ length: 6 }).map((_, i) => (
         <ItemCardSkeleton key={i} />
       ))}

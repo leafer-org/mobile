@@ -5,11 +5,13 @@ export function ProfileEditLayout({
   avatarSection,
   input,
   citySection,
+  extras,
   actions,
 }: {
   avatarSection: ReactNode;
   input: ReactNode;
   citySection?: ReactNode;
+  extras?: ReactNode;
   actions: ReactNode;
 }) {
   return (
@@ -17,6 +19,7 @@ export function ProfileEditLayout({
       {avatarSection}
       {input}
       {citySection}
+      {extras}
       {actions}
     </View>
   );

@@ -1,8 +1,10 @@
+import { View } from 'react-native';
+
 import { useCity } from '@/support/city';
+import { useLikedStatus } from '@/support/like';
 
 import { ItemCard } from '../../_item-card';
 import { useAgeGroup } from '../../model/use-age-group';
-import { useLikedStatus } from '../../model/use-like';
 import { AgeGroupToggle } from '../../ui/age-group-toggle';
 import { DiscoveryHeader } from '../../ui/discovery-header';
 import { DiscoveryScreenLayout } from '../../ui/discovery-screen-layout';
@@ -27,14 +29,7 @@ export function FeedScreen() {
 
   return (
     <DiscoveryScreenLayout
-      header={
-        <DiscoveryHeader
-          searchSlot={<SearchStub />}
-          ageGroupSlot={
-            <AgeGroupToggle value={ageGroup} onChange={setAgeGroup} />
-          }
-        />
-      }
+      header={<DiscoveryHeader searchSlot={<SearchStub />} />}
       body={
         <ItemList
           items={items}
@@ -44,6 +39,11 @@ export function FeedScreen() {
           onEndReached={handleEndReached}
           onRefresh={handleRefresh}
           isRefreshing={isRefreshing}
+          ListHeaderComponent={
+            <View className="px-3 pb-2">
+              <AgeGroupToggle value={ageGroup} onChange={setAgeGroup} />
+            </View>
+          }
           renderItem={(item, { isVisible }) => (
             <ItemCard
               item={item}

@@ -2,6 +2,8 @@ import { View } from 'react-native';
 
 import { Text } from '@/kernel/ui/text';
 
+import { SectionHeader } from '../section-header';
+
 const DAY_NAMES = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 
 type Entry = { dayOfWeek: number; startTime: string; endTime: string };
@@ -11,7 +13,7 @@ export function ScheduleWidget({ entries }: { entries: Entry[] }) {
 
   return (
     <View className="px-4 gap-2">
-      <Text variant="label">Расписание</Text>
+      <SectionHeader title="Расписание" />
       {entries.map((e, i) => (
         <View key={i} className="flex-row items-center justify-between">
           <Text variant="body">{DAY_NAMES[e.dayOfWeek] ?? e.dayOfWeek}</Text>

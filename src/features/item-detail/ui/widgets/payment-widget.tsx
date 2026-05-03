@@ -2,6 +2,8 @@ import { View } from 'react-native';
 
 import { Text } from '@/kernel/ui/text';
 
+import { SectionHeader } from '../section-header';
+
 type PaymentOption = {
   name: string;
   description?: string | null;
@@ -14,7 +16,7 @@ export function PaymentWidget({ options }: { options: PaymentOption[] }) {
 
   return (
     <View className="px-4 gap-2">
-      <Text variant="label">Стоимость</Text>
+      <SectionHeader title="Стоимость" />
       {options.map((opt, i) => (
         <View key={i} className="flex-row items-center justify-between">
           <Text variant="body">{opt.name}</Text>

@@ -7,6 +7,7 @@ export { CARD_WIDTH, MEDIA_HEIGHT } from '../../ui/grid';
 
 export function ItemCardLayout({
   media,
+  typeBadge,
   ageGroup,
   title,
   price,
@@ -19,6 +20,7 @@ export function ItemCardLayout({
   testID,
 }: {
   media: ReactNode;
+  typeBadge?: ReactNode;
   ageGroup?: ReactNode;
   title: ReactNode;
   price?: ReactNode;
@@ -30,6 +32,7 @@ export function ItemCardLayout({
   onPress?: () => void;
   testID?: string;
 }) {
+  const hasBadges = typeBadge !== undefined || ageGroup !== undefined;
   return (
     <TouchableOpacity
       testID={testID}
@@ -42,7 +45,12 @@ export function ItemCardLayout({
         {likeButton}
       </View>
       <View className="px-2 pt-2.5 gap-1.5">
-        {ageGroup}
+        {hasBadges ? (
+          <View className="flex-row flex-wrap gap-1">
+            {typeBadge}
+            {ageGroup}
+          </View>
+        ) : null}
         {title}
         {whenLabel}
         {price}

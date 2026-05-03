@@ -9,10 +9,12 @@ export function BaseInfoWidget({
   title,
   description,
   media,
+  eyebrow,
 }: {
   title: string;
   description: string;
   media: ResolvedMediaItem[];
+  eyebrow?: string;
 }) {
   return (
     <View className="gap-3">
@@ -20,6 +22,11 @@ export function BaseInfoWidget({
         <MediaCarousel media={media} width={SCREEN_WIDTH} height={SCREEN_WIDTH * 0.75} />
       )}
       <View className="px-4 gap-1">
+        {eyebrow ? (
+          <Text className="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">
+            {eyebrow}
+          </Text>
+        ) : null}
         <Text variant="h2">{title}</Text>
         {description ? <Text variant="body" className="text-stone-600 dark:text-stone-300">{description}</Text> : null}
       </View>

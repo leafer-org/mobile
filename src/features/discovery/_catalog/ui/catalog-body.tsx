@@ -26,6 +26,7 @@ type Props = {
   isLoading: boolean;
   categories: CategoryListView[];
   onCategoryPress: (category: CategoryListView) => void;
+  ageGroupSlot?: ReactNode;
   feedSlot?: ReactNode;
 };
 
@@ -33,6 +34,7 @@ export function CatalogBody({
   isLoading,
   categories,
   onCategoryPress,
+  ageGroupSlot,
   feedSlot,
 }: Props) {
   const isDark = useColorScheme() === 'dark';
@@ -40,8 +42,11 @@ export function CatalogBody({
   return (
     <ScrollView
       className="flex-1 bg-stone-50 dark:bg-stone-900"
-      contentContainerStyle={{ paddingTop: 8, paddingBottom: 24 }}
+      contentContainerStyle={{ paddingBottom: 24 }}
     >
+      {ageGroupSlot ? (
+        <View className="px-3 pb-2">{ageGroupSlot}</View>
+      ) : null}
       {isLoading ? (
         <View className="py-8 items-center">
           <ActivityIndicator size="large" color={'#a8a29e'} />

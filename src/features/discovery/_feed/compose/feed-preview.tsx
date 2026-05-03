@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 import { ItemCard } from '../../_item-card';
 import { useAgeGroup } from '../../model/use-age-group';
 import { useCity } from '@/support/city';
-import { useLikedStatus } from '../../model/use-like';
+import { useLikedStatus } from '@/support/like';
 import { useFeed } from '../model/use-feed';
 import { FeedPreviewLayout } from '../ui/feed-preview-layout';
 

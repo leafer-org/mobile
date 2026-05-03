@@ -1,28 +1,30 @@
 import { useRouter } from 'expo-router';
 import { Fragment, useState } from 'react';
+import { View } from 'react-native';
 
 import { useUserLocation } from '@/features/auth/_city/model/use-user-location';
 import { useCity } from '@/support/city';
+import { useLikedStatus } from '@/support/like';
 
 import { ItemCard } from '../../_item-card';
 import { parseBreadcrumbs } from '../../domain/breadcrumb';
 import { useAgeGroup } from '../../model/use-age-group';
-import { useLikedStatus } from '../../model/use-like';
-import { BackButton } from '../../ui/back-button';
-import { Breadcrumbs } from '../../ui/breadcrumbs';
-import { DiscoveryHeader } from '../../ui/discovery-header';
 import { DiscoveryScreenLayout } from '../../ui/discovery-screen-layout';
 import { ItemList } from '../../ui/item-list';
-import { SearchStub } from '../../ui/search-stub';
 import { useCategories } from '../model/use-categories';
 import { useCategoryItems } from '../model/use-category-items';
 import {
   useCategoryFiltersQuery,
   useCategoryItemsFilters,
 } from '../model/use-category-filters';
-import { FilterPanel } from '../ui/filter-panel';
+import { CategoryItemsHeader } from '../ui/category-items-header';
+import { FilterPanel, type AttributeFilterDef } from '../ui/filter-panel';
+import { PriceFilterSheet } from '../ui/price-filter-sheet';
 import { PrimaryFilterRow } from '../ui/primary-filter-row';
+import { PrimaryFilterRowSkeleton } from '../ui/primary-filter-row-skeleton';
+import { RatingFilterSheet } from '../ui/rating-filter-sheet';
 import { SubcategoriesRow } from '../ui/subcategories-row';
+import { SubcategoriesRowSkeleton } from '../ui/subcategories-row-skeleton';
 
 type Props = {
   categoryId: string;
@@ -37,6 +39,8 @@ export function CategoryItemsScreen({
 }: Props) {
   const router = useRouter();
   const [filterVisible, setFilterVisible] = useState(false);
+  const [priceVisible, setPriceVisible] = useState(false);
+  const [ratingVisible, setRatingVisible] = useState(false);
 
   const parsedBreadcrumbs = parseBreadcrumbs(rawBreadcrumbs);
   const breadcrumbs =
@@ -55,6 +59,8 @@ export function CategoryItemsScreen({
     toggleType,
     selectedTypeIds,
     applyPanelFilters,
+    setPriceRange,
+    setMinRating,
     hasModalFilters,
   } = useCategoryItemsFilters();
 
@@ -70,20 +76,14 @@ export function CategoryItemsScreen({
   } = useCategoryItems(categoryId, {
     cityId,
     ageGroup,
-    typeIds: filters.typeIds,
-    priceMin: filters.priceMin,
-    priceMax: filters.priceMax,
-    minRating: filters.minRating,
-    attributeValues: filters.attributeValues,
-    lat: filters.lat,
-    lng: filters.lng,
-    radiusKm: filters.radiusKm,
+    ...filters,
   });
 
   const likedStatus = useLikedStatus(itemIds);
 
   const subcategoryList = subcategories.data ?? [];
   const typeFilters = filtersQuery.data?.typeFilters ?? [];
+  const attributeDefs = (filtersQuery.data?.attributeFilters ?? []) as AttributeFilterDef[];
   const commonFilters = filtersQuery.data?.commonFilters;
   const locationCoords =
     userLocation.lat && userLocation.lng
@@ -93,38 +93,11 @@ export function CategoryItemsScreen({
   return (
     <DiscoveryScreenLayout
       header={
-        <Fragment>
-          <DiscoveryHeader
-            leading={<BackButton onPress={() => router.back()} />}
-            breadcrumbsSlot={
-              <Breadcrumbs
-                items={breadcrumbs}
-                onRootPress={() => router.dismissAll()}
-                onItemPress={(index) => {
-                  const popCount = breadcrumbs.length - 1 - index;
-                  if (popCount > 0) router.dismiss(popCount);
-                }}
-              />
-            }
-            searchSlot={<SearchStub placeholder={`Поиск в «${categoryName}»`} />}
-          />
-          <SubcategoriesRow
-            subcategories={subcategoryList}
-            parentBreadcrumbs={breadcrumbs}
-          />
-          <PrimaryFilterRow
-            hasActiveFilters={hasModalFilters}
-            onFilterPress={() => setFilterVisible(true)}
-            typeFilters={typeFilters}
-            selectedTypeIds={selectedTypeIds}
-            onToggleType={toggleType}
-            hasPriceRange={commonFilters?.hasPriceRange ?? false}
-            priceMin={filters.priceMin}
-            priceMax={filters.priceMax}
-            hasRating={commonFilters?.hasRating ?? false}
-            minRating={filters.minRating}
-          />
-        </Fragment>
+        <CategoryItemsHeader
+          title={categoryName}
+          onBackPress={() => router.back()}
+          onSearchPress={() => router.push('/search' as never)}
+        />
       }
       body={
         <ItemList
@@ -135,6 +108,36 @@ export function CategoryItemsScreen({
           onEndReached={handleEndReached}
           onRefresh={handleRefresh}
           isRefreshing={isRefreshing}
+          ListHeaderComponent={
+            <View>
+              {subcategories.isLoading ? (
+                <SubcategoriesRowSkeleton />
+              ) : (
+                <SubcategoriesRow
+                  subcategories={subcategoryList}
+                  parentBreadcrumbs={breadcrumbs}
+                />
+              )}
+              {filtersQuery.isLoading ? (
+                <PrimaryFilterRowSkeleton />
+              ) : (
+                <PrimaryFilterRow
+                  hasActiveFilters={hasModalFilters}
+                  onFilterPress={() => setFilterVisible(true)}
+                  typeFilters={typeFilters}
+                  selectedTypeIds={selectedTypeIds}
+                  onToggleType={toggleType}
+                  hasPriceRange={commonFilters?.hasPriceRange ?? false}
+                  priceMin={filters.priceMin}
+                  priceMax={filters.priceMax}
+                  onPricePress={() => setPriceVisible(true)}
+                  hasRating={commonFilters?.hasRating ?? false}
+                  minRating={filters.minRating}
+                  onRatingPress={() => setRatingVisible(true)}
+                />
+              )}
+            </View>
+          }
           renderItem={(item, { isVisible }) => (
             <ItemCard
               item={item}
@@ -145,17 +148,32 @@ export function CategoryItemsScreen({
         />
       }
       overlay={
-        filtersQuery.data && (
-          <FilterPanel
-            visible={filterVisible}
-            onClose={() => setFilterVisible(false)}
-            onApply={applyPanelFilters}
-            currentFilters={filters}
-            attributeFilters={filtersQuery.data.attributeFilters}
-            commonFilters={filtersQuery.data.commonFilters}
-            userLocation={locationCoords}
+        <Fragment>
+          {filtersQuery.data && (
+            <FilterPanel
+              visible={filterVisible}
+              onClose={() => setFilterVisible(false)}
+              onApply={applyPanelFilters}
+              currentFilters={filters}
+              attributeFilters={attributeDefs}
+              commonFilters={filtersQuery.data.commonFilters}
+              userLocation={locationCoords}
+            />
+          )}
+          <PriceFilterSheet
+            visible={priceVisible}
+            initialMin={filters.priceMin}
+            initialMax={filters.priceMax}
+            onApply={setPriceRange}
+            onClose={() => setPriceVisible(false)}
           />
-        )
+          <RatingFilterSheet
+            visible={ratingVisible}
+            current={filters.minRating}
+            onApply={setMinRating}
+            onClose={() => setRatingVisible(false)}
+          />
+        </Fragment>
       }
     />
   );

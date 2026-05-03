@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import { ChevronDown, SlidersHorizontal } from 'lucide-react-native';
 import { ScrollView, TouchableOpacity, View, useColorScheme } from 'react-native';
 
 import { Text } from '@/kernel/ui/text';
@@ -15,8 +15,10 @@ type Props = {
   hasPriceRange: boolean;
   priceMin?: number;
   priceMax?: number;
+  onPricePress: () => void;
   hasRating: boolean;
   minRating?: number;
+  onRatingPress: () => void;
 };
 
 export function PrimaryFilterRow({
@@ -28,8 +30,10 @@ export function PrimaryFilterRow({
   hasPriceRange,
   priceMin,
   priceMax,
+  onPricePress,
   hasRating,
   minRating,
+  onRatingPress,
 }: Props) {
   const isDark = useColorScheme() === 'dark';
   const accent = isDark ? '#ffffff' : '#1c1917';
@@ -57,10 +61,10 @@ export function PrimaryFilterRow({
           onPress={onFilterPress}
           className="flex-row items-center gap-1 px-3 py-1.5 rounded-md border border-stone-300 dark:border-stone-700"
         >
-          <Ionicons
-            name="options-outline"
-            size={16}
+          <SlidersHorizontal
+            size={14}
             color={hasActiveFilters ? accent : dim}
+            strokeWidth={1.5}
           />
           {hasActiveFilters && (
             <View className="w-1.5 h-1.5 rounded-full bg-[#FF7F50]" />
@@ -71,7 +75,7 @@ export function PrimaryFilterRow({
           <TouchableOpacity
             testID="price-quick"
             activeOpacity={0.7}
-            onPress={onFilterPress}
+            onPress={onPricePress}
             className={cn(
               'flex-row items-center gap-1 px-3 py-1.5 rounded-md border',
               priceActive
@@ -86,10 +90,11 @@ export function PrimaryFilterRow({
                   ? 'text-stone-900 dark:text-white'
                   : 'text-stone-600 dark:text-stone-400',
               )}
+              style={{ includeFontPadding: false, transform: [{ translateY: -1 }] }}
             >
               {priceActive ? `${priceMin ?? 0}—${priceMax ?? '∞'} ₽` : 'Цена'}
             </Text>
-            <Ionicons name="chevron-down" size={12} color={dim} />
+            <ChevronDown size={14} color={dim} strokeWidth={1.5} />
           </TouchableOpacity>
         )}
 
@@ -97,7 +102,7 @@ export function PrimaryFilterRow({
           <TouchableOpacity
             testID="rating-quick"
             activeOpacity={0.7}
-            onPress={onFilterPress}
+            onPress={onRatingPress}
             className={cn(
               'flex-row items-center gap-1 px-3 py-1.5 rounded-md border',
               ratingActive
@@ -112,10 +117,11 @@ export function PrimaryFilterRow({
                   ? 'text-stone-900 dark:text-white'
                   : 'text-stone-600 dark:text-stone-400',
               )}
+              style={{ includeFontPadding: false, transform: [{ translateY: -1 }] }}
             >
               {ratingActive ? `${minRating}+` : 'Рейтинг'}
             </Text>
-            <Ionicons name="chevron-down" size={12} color={dim} />
+            <ChevronDown size={14} color={dim} strokeWidth={1.5} />
           </TouchableOpacity>
         )}
 
@@ -141,6 +147,7 @@ export function PrimaryFilterRow({
                     ? 'text-stone-900 dark:text-white'
                     : 'text-stone-600 dark:text-stone-400',
                 )}
+                style={{ includeFontPadding: false, transform: [{ translateY: -1 }] }}
               >
                 {t.name}
               </Text>

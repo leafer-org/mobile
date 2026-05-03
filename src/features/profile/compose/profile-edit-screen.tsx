@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import type { Avatar } from '@/kernel/ui/avatar';
 import { Button } from '@/kernel/ui/button';
 import { ScreenLayout } from '@/kernel/ui/screen-layout';
@@ -15,10 +17,12 @@ import { ProfileEditLayout } from '../ui/profile-edit-layout';
 export function ProfileEditScreen({
   currentFullName,
   currentAvatar,
+  extras,
   onSuccess,
 }: {
   currentFullName?: string;
   currentAvatar?: Avatar;
+  extras?: ReactNode;
   onSuccess: () => void;
 }) {
   const fullNameField = useProfileFullName(currentFullName ?? '');
@@ -72,6 +76,7 @@ export function ProfileEditScreen({
             }
           />
         }
+        extras={extras}
         actions={
           <Button
             variant="primary"

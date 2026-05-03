@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
+  ScrollView,
   View,
   type ViewToken,
 } from 'react-native';
@@ -50,19 +51,35 @@ export function ItemList({
   const viewabilityConfigRef = useRef({ itemVisiblePercentThreshold: 50 });
 
   if (isLoading) {
-    return <ItemListSkeleton />;
+    return (
+      <ScrollView contentContainerStyle={{ paddingBottom: 16 }}>
+        {ListHeaderComponent}
+        <ItemListSkeleton />
+      </ScrollView>
+    );
   }
 
   if (items.length === 0) {
     return (
-      <View testID="item-list-empty" className="flex-1 items-center justify-center py-20 px-6">
-        <Text variant="h3" className="text-center">
-          Пока нет услуг
-        </Text>
-        <Text variant="caption" className="text-center mt-2">
-          Попробуйте изменить город или возрастную группу
-        </Text>
-      </View>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 16 }}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={'#a8a29e'} />
+        }
+      >
+        {ListHeaderComponent}
+        <View
+          testID="item-list-empty"
+          className="flex-1 items-center justify-center py-20 px-6"
+        >
+          <Text variant="h3" className="text-center">
+            Пока нет услуг
+          </Text>
+          <Text variant="caption" className="text-center mt-2">
+            Попробуйте изменить город или возрастную группу
+          </Text>
+        </View>
+      </ScrollView>
     );
   }
 
@@ -94,7 +111,6 @@ export function ItemList({
       maxToRenderPerBatch={6}
       removeClippedSubviews
       contentContainerStyle={{
-        paddingTop: 8,
         paddingBottom: 16,
         paddingHorizontal: HORIZONTAL_PADDING,
       }}

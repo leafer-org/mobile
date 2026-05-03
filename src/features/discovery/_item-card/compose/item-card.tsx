@@ -14,6 +14,7 @@ import { OwnerName } from '../ui/owner-name';
 import { PriceLabel } from '../ui/price-label';
 import { RatingBadge } from '../ui/rating-badge';
 import { ScheduleSlotLabel } from '../ui/schedule-slot-label';
+import { TypeBadge } from '../ui/type-badge';
 
 export function ItemCard({
   item,
@@ -48,6 +49,7 @@ export function ItemCard({
         />
       }
       likeButton={<LikeButton isLiked={isLiked} onPress={() => toggle(isLiked)} />}
+      typeBadge={item.typeName ? <TypeBadge name={item.typeName} /> : undefined}
       ageGroup={item.cardAgeGroup ? <AgeGroupBadge ageGroup={item.cardAgeGroup} /> : undefined}
       title={<ItemTitle title={item.title} />}
       whenLabel={whenLabel}

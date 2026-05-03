@@ -32,6 +32,7 @@ export type CardAgeGroup = 'adults' | 'children' | 'all';
 export type ItemListView = {
   itemId: string;
   typeId: string;
+  typeName: string;
   title: string;
   description: string | null;
   media: ResolvedMediaItem[];
