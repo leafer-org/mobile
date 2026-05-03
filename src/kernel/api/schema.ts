@@ -2452,6 +2452,15 @@ export interface components {
       owner?: components['schemas']['ItemOwnerSummary'] | null;
       location?: components['schemas']['ItemLocationSummary'] | null;
       categoryIds: string[];
+      /** Format: date-time */
+      eventDateTime?: string | null;
+      nextScheduleSlot?: {
+        dayOfWeek: number;
+        startTime: string;
+        endTime: string;
+      } | null;
+      /** @enum {string|null} */
+      cardAgeGroup?: ItemListViewCardAgeGroup | null;
     };
     CursorPaginatedItems: {
       items: components['schemas']['ItemListView'][];
@@ -2740,6 +2749,7 @@ export interface components {
        */
       type: PaymentWidgetSettingsType;
       required: boolean;
+      showOnCard?: boolean;
       allowedStrategies: components['schemas']['PaymentStrategy'][];
     };
     EventDateTimeWidgetSettings: {
@@ -2749,6 +2759,7 @@ export interface components {
        */
       type: EventDateTimeWidgetSettingsType;
       required: boolean;
+      showOnCard?: boolean;
       maxDates?: number | null;
     };
     BaseWidgetSettings: {
@@ -2758,6 +2769,7 @@ export interface components {
        */
       type: BaseWidgetSettingsType;
       required: boolean;
+      showOnCard?: boolean;
     };
     WidgetSettings:
       | components['schemas']['PaymentWidgetSettings']
@@ -6298,6 +6310,15 @@ export interface operations {
       };
       /** @description Категория не найдена */
       404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DomainErrorResponse'];
+        };
+      };
+      /** @description Категория опубликована — обновление недоступно (нужно сначала unpublish) */
+      409: {
         headers: {
           [name: string]: unknown;
         };
@@ -10142,6 +10163,11 @@ export enum PaymentOptionStrategy {
   free = 'free',
   one_time = 'one-time',
   subscription = 'subscription',
+}
+export enum ItemListViewCardAgeGroup {
+  adults = 'adults',
+  children = 'children',
+  all = 'all',
 }
 export enum AttributeSchemaType {
   text = 'text',

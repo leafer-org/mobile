@@ -7,18 +7,24 @@ export { CARD_WIDTH, MEDIA_HEIGHT } from '../../ui/grid';
 
 export function ItemCardLayout({
   media,
+  ageGroup,
   title,
   price,
+  whenLabel,
   rating,
+  address,
   owner,
   likeButton,
   onPress,
   testID,
 }: {
   media: ReactNode;
+  ageGroup?: ReactNode;
   title: ReactNode;
   price?: ReactNode;
+  whenLabel?: ReactNode;
   rating?: ReactNode;
+  address?: ReactNode;
   owner?: ReactNode;
   likeButton?: ReactNode;
   onPress?: () => void;
@@ -36,10 +42,13 @@ export function ItemCardLayout({
         {likeButton}
       </View>
       <View className="px-2 pt-2.5 gap-1.5">
-        {owner}
+        {ageGroup}
         {title}
+        {whenLabel}
         {price}
         {rating}
+        {address}
+        {owner}
       </View>
     </TouchableOpacity>
   );

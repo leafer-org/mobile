@@ -21,6 +21,14 @@ export type PaymentOption = {
   price: number | null;
 };
 
+export type ScheduleSlot = {
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+};
+
+export type CardAgeGroup = 'adults' | 'children' | 'all';
+
 export type ItemListView = {
   itemId: string;
   typeId: string;
@@ -34,4 +42,8 @@ export type ItemListView = {
   owner: { name: string; avatarId: string | null; avatarUrl: string | null } | null;
   location: { cityId: string; address: string | null } | null;
   categoryIds: string[];
+  // Card-enrichment-поля от виджетов с showOnCard=true (бэк может присылать null/отсутствие)
+  eventDateTime?: string | null;
+  nextScheduleSlot?: ScheduleSlot | null;
+  cardAgeGroup?: CardAgeGroup | null;
 };
