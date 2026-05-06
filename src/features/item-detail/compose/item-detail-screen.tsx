@@ -49,11 +49,26 @@ export function ItemDetailScreen({ itemId }: { itemId: string }) {
   const widgets = data.widgets as Array<Record<string, unknown>>;
   const ownerWidget = widgets.find((w) => w.type === 'owner');
   const ownerName = (ownerWidget?.name as string | undefined) ?? undefined;
+  const ownerOrganizationId = ownerWidget?.organizationId as string | undefined;
   const baseInfoWidget = widgets.find((w) => w.type === 'base-info');
   const titleForShare = baseInfoWidget?.title as string | undefined;
 
   const paymentWidget = widgets.find((w) => w.type === 'payment');
   const cta = computeCta(paymentWidget?.options as PaymentOption[] | undefined);
+
+  const handleMessagePress = ownerOrganizationId
+    ? () => {
+        router.push({
+          pathname: '/organizations/[orgId]/chat',
+          params: {
+            orgId: ownerOrganizationId,
+            contextItemId: itemId,
+            contextItemTitle: titleForShare,
+            organizationName: ownerName,
+          },
+        });
+      }
+    : undefined;
 
   return (
     <View className="flex-1 bg-white dark:bg-stone-900">
@@ -75,6 +90,7 @@ export function ItemDetailScreen({ itemId }: { itemId: string }) {
         priceCaption={cta.priceCaption}
         ctaLabel="Записаться"
         onCtaPress={() => {}}
+        onMessagePress={handleMessagePress}
       />
     </View>
   );

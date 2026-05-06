@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { Suspense } from 'react';
 import { useColorScheme, View } from 'react-native';
 
+import { RealtimeProvider } from '@/kernel/realtime';
 import { Spinner } from '@/kernel/ui/spinner';
 import { Text } from '@/kernel/ui/text';
 
@@ -19,6 +20,7 @@ export default function AppLayout() {
 
   return (
     <Suspense fallback={<SuspenseFallback />}>
+      <RealtimeProvider>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -41,7 +43,42 @@ export default function AppLayout() {
           }}
         />
         <Stack.Screen
-          name="organizations/[orgId]"
+          name="organizations/[orgId]/index"
+          options={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        />
+        <Stack.Screen
+          name="organizations/[orgId]/chat"
+          options={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        />
+        <Stack.Screen
+          name="organizations/[orgId]/inbox/index"
+          options={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        />
+        <Stack.Screen
+          name="organizations/[orgId]/inbox/[chatId]"
+          options={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        />
+        <Stack.Screen
+          name="chats/index"
+          options={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        />
+        <Stack.Screen
+          name="chats/[chatId]"
           options={{
             headerShown: false,
             animation: 'slide_from_right',
@@ -55,6 +92,7 @@ export default function AppLayout() {
           }}
         />
       </Stack>
+      </RealtimeProvider>
     </Suspense>
   );
 }

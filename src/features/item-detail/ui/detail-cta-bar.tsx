@@ -9,9 +9,16 @@ type Props = {
   priceCaption?: string | null;
   ctaLabel: string;
   onCtaPress: () => void;
+  onMessagePress?: () => void;
 };
 
-export function DetailCtaBar({ priceLabel, priceCaption, ctaLabel, onCtaPress }: Props) {
+export function DetailCtaBar({
+  priceLabel,
+  priceCaption,
+  ctaLabel,
+  onCtaPress,
+  onMessagePress,
+}: Props) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -33,6 +40,13 @@ export function DetailCtaBar({ priceLabel, priceCaption, ctaLabel, onCtaPress }:
       ) : (
         <View className="flex-1" />
       )}
+      {onMessagePress ? (
+        <View className="flex-shrink-0">
+          <Button variant="outline" size="md" onPress={onMessagePress}>
+            Написать
+          </Button>
+        </View>
+      ) : null}
       <View className="flex-shrink-0">
         <Button variant="primary" onPress={onCtaPress}>
           {ctaLabel}

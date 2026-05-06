@@ -28,6 +28,15 @@ export default function SellerOrgTabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="chats"
+        options={{
+          title: 'Чаты',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="chatbubbles-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="requests"
         options={{
           title: 'Заявки',
@@ -37,9 +46,18 @@ export default function SellerOrgTabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="management"
+        options={{
+          title: 'Управление',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
-          title: 'Орг',
+          title: 'Профиль',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="business-outline" size={size} color={color} />
           ),
