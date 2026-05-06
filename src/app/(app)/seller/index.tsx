@@ -26,7 +26,7 @@ export default function SellerEntryRoute() {
   }, [isLoading, organizations, selectedId]);
 
   return (
-    <ScreenLayout>
+    <ScreenLayout compact>
       <View className="flex-1 items-center justify-center">
         <Spinner size="large" />
       </View>

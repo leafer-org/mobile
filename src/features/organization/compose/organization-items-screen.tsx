@@ -21,13 +21,13 @@ export function OrganizationItemsScreen({
   const org = orgsData?.organizations.find((o) => o.id === orgId);
 
   return (
-    <ScreenLayout>
-      <View className="gap-4 flex-1">
-        <View className="gap-1">
-          {org && <Text variant="h1">{org.name}</Text>}
+    <ScreenLayout compact>
+      <View className="gap-3 flex-1">
+        <View>
           <Text variant="caption" color="secondary">
-            Услуги и товары
+            {org?.name ?? 'Организация'}
           </Text>
+          <Text variant="h2">Услуги</Text>
         </View>
 
         {isPending && (

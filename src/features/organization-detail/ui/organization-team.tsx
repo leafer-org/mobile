@@ -2,24 +2,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { ScrollView, useColorScheme, View } from 'react-native';
 
+import type { OrganizationProfile } from '@/kernel/organization-profile';
 import { Text } from '@/kernel/ui/text';
 
-type Member = {
-  name: string;
-  description?: string | null;
-  avatarUrl?: string | null;
-};
-
-type Props = {
-  title: string;
-  members: Member[];
-};
-
-export function OrganizationTeam({ title, members }: Props) {
+export function OrganizationTeam({ profile }: { profile: OrganizationProfile }) {
   const isDark = useColorScheme() === 'dark';
   const iconColor = isDark ? '#a8a29e' : '#78716c';
 
-  if (members.length === 0) return null;
+  if (!profile.team || (profile.team.members ?? []).length === 0) return null;
+  const { title, members } = profile.team;
 
   return (
     <View className="pt-4 gap-2">
@@ -31,7 +22,7 @@ export function OrganizationTeam({ title, members }: Props) {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
       >
-        {members.map((m, idx) => (
+        {(members ?? []).map((m, idx) => (
           <View key={`${m.name}-${idx}`} className="w-32 items-center gap-2">
             <View className="w-20 h-20 rounded-full overflow-hidden bg-stone-100 dark:bg-stone-800 items-center justify-center">
               {m.avatarUrl ? (

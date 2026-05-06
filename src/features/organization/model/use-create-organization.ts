@@ -5,7 +5,7 @@ import { useApiFetchClient } from '@/kernel/api/provider';
 
 type CreateOrganizationInput = {
   name: string;
-  description: string;
+  avatarId?: string | null;
 };
 
 export function useCreateOrganization({
@@ -19,7 +19,11 @@ export function useCreateOrganization({
   return useMutation({
     mutationFn: async (input: CreateOrganizationInput) => {
       const res = await fetchClient.POST('/organizations', {
-        body: { name: input.name, description: input.description },
+        body: {
+          name: input.name,
+          description: '',
+          avatarId: input.avatarId ?? null,
+        },
       });
       if (res.error) throw res.error;
       return res.data;

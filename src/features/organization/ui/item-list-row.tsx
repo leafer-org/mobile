@@ -32,7 +32,7 @@ export function ItemListRow({ widgets, draftStatus, hasPublication, onPress }: I
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
-      className="rounded-xl border border-stone-200 dark:border-stone-700 p-4 gap-1"
+      className="rounded-lg border border-stone-200 dark:border-stone-700 p-3 gap-1"
     >
       <Text variant="h3" numberOfLines={1}>
         {title}

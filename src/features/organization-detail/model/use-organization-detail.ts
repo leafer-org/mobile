@@ -4,12 +4,10 @@ import { PixelRatio } from 'react-native';
 import type { ItemListView } from '@/features/discovery/domain/types';
 import type { PublicApiOperations } from '@/kernel/api';
 import { useApiFetchClient } from '@/kernel/api/provider';
+import type { OrganizationProfile } from '@/kernel/organization-profile';
 
 type RawResponse =
   PublicApiOperations['getDiscoveryOrganizationDetail']['responses']['200']['content']['application/json'];
-
-export type OrganizationProfile = RawResponse['profile'];
-export type OrganizationContact = OrganizationProfile['contacts'][number];
 
 export type OrganizationDetailData = {
   profile: OrganizationProfile;

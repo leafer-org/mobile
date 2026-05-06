@@ -13,6 +13,7 @@ export default function SellerOrgLayout() {
     >
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="items/new" options={{ animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="edit" options={{ animation: 'slide_from_bottom' }} />
     </Stack>
   );
 }

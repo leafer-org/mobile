@@ -36,7 +36,7 @@ export function OrganizationListItem({
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
-      className="flex-row items-start gap-3 rounded-xl border border-stone-200 dark:border-stone-700 p-4"
+      className="flex-row items-start gap-3 rounded-lg border border-stone-200 dark:border-stone-700 p-3"
     >
       {avatarUrl ? (
         <Image

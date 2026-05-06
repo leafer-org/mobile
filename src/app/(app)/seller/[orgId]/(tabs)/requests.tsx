@@ -5,7 +5,7 @@ import { Text } from '@/kernel/ui/text';
 
 export default function SellerOrgRequestsRoute() {
   return (
-    <ScreenLayout>
+    <ScreenLayout compact>
       <View className="flex-1 items-center justify-center gap-2">
         <Text variant="h2">Заявки</Text>
         <Text variant="body" color="secondary">

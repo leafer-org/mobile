@@ -2,19 +2,19 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useColorScheme, View } from 'react-native';
 
+import type { OrganizationProfile } from '@/kernel/organization-profile';
 import { Text } from '@/kernel/ui/text';
 
 type Props = {
-  name: string;
-  avatarUrl: string | null;
-  rating: number | null;
-  reviewCount: number;
-  itemCount: number;
+  profile: OrganizationProfile;
+  itemCount?: number;
 };
 
-export function OrganizationHeader({ name, avatarUrl, rating, reviewCount, itemCount }: Props) {
+export function OrganizationHeader({ profile, itemCount }: Props) {
   const isDark = useColorScheme() === 'dark';
   const iconColor = isDark ? '#a8a29e' : '#78716c';
+  const avatarUrl = profile.avatarUrl ?? null;
+  const rating = profile.rating ?? null;
 
   return (
     <View className="px-4 pt-4 pb-3 gap-3">
@@ -32,7 +32,7 @@ export function OrganizationHeader({ name, avatarUrl, rating, reviewCount, itemC
         </View>
         <View className="flex-1">
           <Text numberOfLines={2} className="text-lg font-semibold text-stone-900 dark:text-white">
-            {name}
+            {profile.name}
           </Text>
           <View className="flex-row items-center gap-3 pt-1">
             {rating !== null && (
@@ -42,13 +42,15 @@ export function OrganizationHeader({ name, avatarUrl, rating, reviewCount, itemC
                   {rating.toFixed(1)}
                 </Text>
                 <Text className="text-xs text-stone-500 dark:text-stone-400">
-                  ({reviewCount})
+                  ({profile.reviewCount})
                 </Text>
               </View>
             )}
-            <Text className="text-xs text-stone-500 dark:text-stone-400">
-              {formatItemCount(itemCount)}
-            </Text>
+            {itemCount !== undefined && (
+              <Text className="text-xs text-stone-500 dark:text-stone-400">
+                {formatItemCount(itemCount)}
+              </Text>
+            )}
           </View>
         </View>
       </View>

@@ -17,9 +17,9 @@ export function OrganizationsPickerScreen({
   const { data, isPending, error } = useMyOrganizations();
 
   return (
-    <ScreenLayout>
-      <View className="gap-4 flex-1">
-        <Text variant="h1">Мои организации</Text>
+    <ScreenLayout compact>
+      <View className="gap-3 flex-1">
+        <Text variant="h2">Мои организации</Text>
 
         {isPending && (
           <View className="flex-1 items-center justify-center">
