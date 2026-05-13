@@ -1,9 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
-import * as FileSystem from 'expo-file-system/legacy';
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback, useState } from 'react';
 
+import { uploadMultipart } from './file-ops';
 import { useApiFetchClient } from '@/kernel/api/provider';
+
+type FetchClient = ReturnType<typeof useApiFetchClient>;
 
 export interface UploadImageResult {
   fileId: string;
@@ -26,37 +28,8 @@ export function useUploadImage(options: UseUploadImageOptions) {
   const [progress, setProgress] = useState(0);
 
   const mutation = useMutation({
-    mutationFn: async (input: {
-      fileUri: string;
-      mimeType: string;
-    }): Promise<UploadImageResult> => {
-      const { data: requestResult, error: requestError } = await fetchClient.POST(
-        '/media/image/upload-request',
-        { body: { name, mimeType: input.mimeType } },
-      );
-      if (requestError) throw requestError;
-
-      await uploadFileToS3({
-        fileUri: input.fileUri,
-        mimeType: input.mimeType,
-        uploadUrl: requestResult.uploadUrl,
-        uploadFields: requestResult.uploadFields,
-        onProgress: setProgress,
-      });
-
-      const { data: completeResult, error: completeError } = await fetchClient.POST(
-        '/media/image/upload-complete',
-        { body: { mediaId: requestResult.fileId } },
-      );
-      if (completeError) throw completeError;
-
-      return {
-        fileId: requestResult.fileId,
-        width: completeResult.width ?? null,
-        height: completeResult.height ?? null,
-        mimeType: completeResult.mimeType ?? null,
-      };
-    },
+    mutationFn: (input: { fileUri: string; mimeType: string }) =>
+      performImageUpload({ ...input, name, fetchClient, onProgress: setProgress }),
     onSuccess: () => setProgress(100),
     onError: () => setProgress(0),
   });
@@ -81,9 +54,7 @@ export function useUploadImage(options: UseUploadImageOptions) {
 
     const mimeType = resolveImageMimeType(asset.uri, asset.mimeType);
 
-    const info = await FileSystem.getInfoAsync(asset.uri);
-    const fileSize = info.exists ? info.size : 0;
-
+    const fileSize = asset.fileSize ?? 0;
     const maxFileSize = maxSizeMb * 1024 * 1024;
     if (fileSize > maxFileSize) {
       throw new Error(`Файл слишком большой. Максимальный размер — ${maxSizeMb} МБ`);
@@ -106,6 +77,48 @@ export function useUploadImage(options: UseUploadImageOptions) {
   };
 }
 
+async function performImageUpload(params: {
+  fileUri: string;
+  mimeType: string;
+  name: string;
+  fetchClient: FetchClient;
+  onProgress: (progress: number) => void;
+}): Promise<UploadImageResult> {
+  const { fileUri, mimeType, name, fetchClient, onProgress } = params;
+
+  const { data: requestResult, error: requestError } = await fetchClient.POST(
+    '/media/image/upload-request',
+    { body: { name, mimeType } },
+  );
+  if (requestError) throw requestError;
+
+  const response = await uploadMultipart({
+    url: requestResult.uploadUrl,
+    fileUri,
+    mimeType,
+    fields: requestResult.uploadFields,
+    onProgress,
+  });
+
+  if (response.status < 200 || response.status >= 300) {
+    const message = parseS3Error(response.body) ?? `Upload failed with status ${response.status}`;
+    throw new Error(message);
+  }
+
+  const { data: completeResult, error: completeError } = await fetchClient.POST(
+    '/media/image/upload-complete',
+    { body: { mediaId: requestResult.fileId } },
+  );
+  if (completeError) throw completeError;
+
+  return {
+    fileId: requestResult.fileId,
+    width: completeResult.width ?? null,
+    height: completeResult.height ?? null,
+    mimeType: completeResult.mimeType ?? null,
+  };
+}
+
 function resolveImageMimeType(uri: string, mimeType?: string | null): string {
   if (mimeType) return mimeType;
   const lower = uri.toLowerCase();
@@ -113,38 +126,6 @@ function resolveImageMimeType(uri: string, mimeType?: string | null): string {
   if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return 'image/jpeg';
   if (lower.endsWith('.webp')) return 'image/webp';
   return 'image/jpeg';
-}
-
-async function uploadFileToS3(params: {
-  fileUri: string;
-  mimeType: string;
-  uploadUrl: string;
-  uploadFields: Record<string, string>;
-  onProgress?: (progress: number) => void;
-}): Promise<void> {
-  const task = FileSystem.createUploadTask(
-    params.uploadUrl,
-    params.fileUri,
-    {
-      httpMethod: 'POST',
-      uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-      fieldName: 'file',
-      parameters: params.uploadFields,
-      mimeType: params.mimeType,
-    },
-    (data) => {
-      if (data.totalBytesExpectedToSend > 0) {
-        params.onProgress?.((data.totalBytesSent / data.totalBytesExpectedToSend) * 100);
-      }
-    },
-  );
-
-  const response = await task.uploadAsync();
-  if (!response) throw new Error('Upload was cancelled');
-  if (response.status < 200 || response.status >= 300) {
-    const message = parseS3Error(response.body) ?? `Upload failed with status ${response.status}`;
-    throw new Error(message);
-  }
 }
 
 const S3_ERROR_MESSAGES: Record<string, string> = {

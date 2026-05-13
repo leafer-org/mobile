@@ -1,15 +1,16 @@
 import { type Href, router, useLocalSearchParams } from 'expo-router';
 
-import { EmployeeInboxScreen } from '@/features/organization';
+import { EmployeeInboxScreen, useCurrentOrganizationId } from '@/features/organization';
 
 export default function SellerOrgChatsListRoute() {
-  const { orgId } = useLocalSearchParams<{ orgId: string }>();
+
+  const currentOrgId = useCurrentOrganizationId();
 
   return (
     <EmployeeInboxScreen
-      organizationId={orgId ?? ''}
+      organizationId={currentOrgId}
       onChatPress={(chatId) =>
-        router.push(`/seller/${orgId}/chats/${chatId}` as Href)
+        router.push(`/seller/${currentOrgId}/chats/${chatId}` as Href)
       }
     />
   );

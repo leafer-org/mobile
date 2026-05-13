@@ -23,10 +23,12 @@ export function useSendAsEmployee() {
       if (error || !data) throw new Error('failed_to_send_as_employee');
       return { ...data, chatId };
     },
-    onSuccess: (result) => {
-      qc.invalidateQueries({ queryKey: chatQueryKeys.detail(result.chatId) });
-      qc.invalidateQueries({ queryKey: chatQueryKeys.messages(result.chatId) });
-      qc.invalidateQueries({ queryKey: chatQueryKeys.all });
+    onSuccess: async (result) => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: chatQueryKeys.detail(result.chatId) }),
+        qc.invalidateQueries({ queryKey: chatQueryKeys.messages(result.chatId) }),
+        qc.invalidateQueries({ queryKey: chatQueryKeys.all }),
+      ]);
     },
   });
 }

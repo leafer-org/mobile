@@ -1,21 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useApiFetchClient } from '@/kernel/api';
-import {
-  PathsAdminChatsGetParametersQuerySlotKind,
-  type PathsAdminChatsGetParametersQueryStatus,
-} from '@/kernel/api/schema';
+import { PathsAdminChatsGetParametersQuerySlotKind } from '@/kernel/api/schema';
 import { chatQueryKeys } from '@/support/chat';
 import type { ChatList } from '@/support/chat';
 
-type Filters = {
-  organizationId: string;
-  assignedToMe?: boolean;
-  unassigned?: boolean;
-  status?: PathsAdminChatsGetParametersQueryStatus;
-};
+import type { InboxFilters } from '../domain/inbox-tab';
 
-export function useEmployeeInbox(filters: Filters) {
+export function useEmployeeInbox(filters: InboxFilters) {
   const fetchClient = useApiFetchClient();
 
   return useQuery({
@@ -28,7 +20,6 @@ export function useEmployeeInbox(filters: Filters) {
             orgId: filters.organizationId,
             assignedToMe: filters.assignedToMe,
             unassigned: filters.unassigned,
-            status: filters.status,
             from: 0,
             size: 100,
           },

@@ -15,8 +15,8 @@ export function useBlockChat(chatId: string) {
       });
       if (error) throw new Error('failed_to_block');
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: chatQueryKeys.detail(chatId) });
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: chatQueryKeys.detail(chatId) });
     },
   });
 }
@@ -32,8 +32,8 @@ export function useUnblockChat(chatId: string) {
       });
       if (error) throw new Error('failed_to_unblock');
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: chatQueryKeys.detail(chatId) });
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: chatQueryKeys.detail(chatId) });
     },
   });
 }

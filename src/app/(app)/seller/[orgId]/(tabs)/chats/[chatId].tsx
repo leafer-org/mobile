@@ -1,13 +1,16 @@
 import { router, useLocalSearchParams } from 'expo-router';
 
-import { EmployeeChatScreen } from '@/features/organization';
+import { EmployeeChatScreen, useCurrentOrganizationId } from '@/features/organization';
 
 export default function SellerOrgChatRoute() {
-  const { orgId, chatId } = useLocalSearchParams<{ orgId: string; chatId: string }>();
+  const { chatId } = useLocalSearchParams<{ chatId: string }>();
+
+  const currentOrgId = useCurrentOrganizationId();
+
   return (
     <EmployeeChatScreen
-      organizationId={orgId ?? ''}
-      chatId={chatId ?? ''}
+      organizationId={currentOrgId}
+      chatId={chatId}
       onBack={() => router.back()}
     />
   );

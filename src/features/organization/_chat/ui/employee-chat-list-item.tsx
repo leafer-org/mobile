@@ -3,6 +3,8 @@ import { Pressable, View } from 'react-native';
 import { Text } from '@/kernel/ui/text';
 import type { ChatListItem } from '@/support/chat';
 
+import { formatInboxTimestamp } from '../domain/inbox-timestamp';
+
 type Props = {
   item: ChatListItem;
   myUserId: string | null;
@@ -22,6 +24,9 @@ export function EmployeeChatListItem({ item, myUserId, organizationId, onPress }
     ? `Клиент ${(userParticipant.subjectId as string).slice(0, 6)}`
     : 'Клиент';
 
+  const timestampIso = item.lastMessage?.createdAt ?? item.updatedAt;
+  const timestamp = formatInboxTimestamp(timestampIso);
+
   return (
     <Pressable
       onPress={onPress}
@@ -31,7 +36,7 @@ export function EmployeeChatListItem({ item, myUserId, organizationId, onPress }
         <Text variant="label">К</Text>
       </View>
       <View className="flex-1">
-        <View className="flex-row items-center justify-between gap-2">
+        <View className="flex-row items-center gap-2">
           <Text variant="label" numberOfLines={1} className="flex-1">
             {counterpartLabel}
           </Text>
@@ -48,23 +53,26 @@ export function EmployeeChatListItem({ item, myUserId, organizationId, onPress }
               </Text>
             </View>
           ) : null}
+          <Text variant="caption">{timestamp}</Text>
         </View>
-        <Text variant="caption" numberOfLines={1} className="mt-0.5">
-          {item.lastMessage?.preview ?? '—'}
-        </Text>
+        <View className="flex-row items-center gap-2 mt-0.5">
+          <Text variant="caption" numberOfLines={1} className="flex-1">
+            {item.lastMessage?.preview ?? '—'}
+          </Text>
+          {item.myUnreadCount > 0 ? (
+            <View className="bg-stone-900 dark:bg-white rounded-full min-w-5 h-5 items-center justify-center px-1.5">
+              <Text className="text-white dark:text-stone-900 text-xs font-semibold">
+                {item.myUnreadCount}
+              </Text>
+            </View>
+          ) : null}
+        </View>
         {item.status !== 'open' ? (
           <Text variant="caption" color="error" className="mt-0.5">
             {item.status === 'blocked' ? 'Заблокирован' : 'Закрыт'}
           </Text>
         ) : null}
       </View>
-      {item.myUnreadCount > 0 ? (
-        <View className="bg-stone-900 dark:bg-white rounded-full min-w-5 h-5 items-center justify-center px-1.5">
-          <Text className="text-white dark:text-stone-900 text-xs font-semibold">
-            {item.myUnreadCount}
-          </Text>
-        </View>
-      ) : null}
     </Pressable>
   );
 }

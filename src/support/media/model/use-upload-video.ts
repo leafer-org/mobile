@@ -1,10 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
-import { File } from 'expo-file-system';
-import * as FileSystem from 'expo-file-system/legacy';
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback, useState } from 'react';
 
+import { openFileChunkReader } from './file-ops';
 import { useApiFetchClient } from '@/kernel/api/provider';
+
+type FetchClient = ReturnType<typeof useApiFetchClient>;
 
 interface UploadVideoResult {
   mediaId: string;
@@ -22,64 +23,14 @@ export function useUploadVideo(options: UseUploadVideoOptions) {
   const [progress, setProgress] = useState(0);
 
   const mutation = useMutation({
-    mutationFn: async (input: {
-      fileUri: string;
-      mimeType: string;
-      fileSize: number;
-    }): Promise<UploadVideoResult> => {
-      setProgress(0);
-
-      const { data: initData, error: initError } = await fetchClient.POST(
-        '/media/video/upload-init',
-        { body: { name, mimeType: input.mimeType, fileSize: input.fileSize } },
-      );
-      if (initError) throw initError;
-
-      const { mediaId, uploadId, partUrls } = initData;
-
-      const partSize = Math.ceil(input.fileSize / partUrls.length);
-      const partProgresses = new Array<number>(partUrls.length).fill(0);
-
-      const updateProgress = () => {
-        const total = partProgresses.reduce((sum, p) => sum + p, 0) / partUrls.length;
-        setProgress(Math.round(total));
-      };
-
-      const file = new File(input.fileUri);
-
-      const uploadTasks = partUrls.map((url, i) => {
-        const start = i * partSize;
-        const end = Math.min(start + partSize, input.fileSize);
-        const length = end - start;
-
-        return async (): Promise<{ partNumber: number; etag: string }> => {
-          const handle = file.open();
-          let bytes: Uint8Array;
-          try {
-            handle.offset = start;
-            bytes = handle.readBytes(length);
-          } finally {
-            handle.close();
-          }
-
-          const etag = await uploadPart(url, bytes, (partProgress) => {
-            partProgresses[i] = partProgress;
-            updateProgress();
-          });
-          return { partNumber: i + 1, etag };
-        };
-      });
-
-      const parts = await runWithConcurrency(uploadTasks, partConcurrency);
-
-      const { error: completeError } = await fetchClient.POST('/media/video/upload-complete', {
-        body: { mediaId, uploadId, parts },
-      });
-      if (completeError) throw completeError;
-
-      setProgress(100);
-      return { mediaId };
-    },
+    mutationFn: (input: { fileUri: string; mimeType: string; fileSize: number }) =>
+      performVideoUpload({
+        ...input,
+        name,
+        partConcurrency,
+        fetchClient,
+        onProgress: setProgress,
+      }),
     onError: () => setProgress(0),
   });
 
@@ -101,8 +52,7 @@ export function useUploadVideo(options: UseUploadVideoOptions) {
 
     const mimeType = asset.mimeType ?? 'video/mp4';
 
-    const info = await FileSystem.getInfoAsync(asset.uri);
-    const fileSize = info.exists ? info.size : 0;
+    const fileSize = asset.fileSize ?? 0;
     if (!fileSize) throw new Error('Не удалось определить размер файла');
 
     const maxFileSize = maxSizeMb * 1024 * 1024;
@@ -125,6 +75,58 @@ export function useUploadVideo(options: UseUploadVideoOptions) {
       mutation.reset();
     },
   };
+}
+
+async function performVideoUpload(params: {
+  fileUri: string;
+  mimeType: string;
+  fileSize: number;
+  name: string;
+  partConcurrency: number;
+  fetchClient: FetchClient;
+  onProgress: (progress: number) => void;
+}): Promise<UploadVideoResult> {
+  const { fileUri, mimeType, fileSize, name, partConcurrency, fetchClient, onProgress } = params;
+  onProgress(0);
+
+  const { data: initData, error: initError } = await fetchClient.POST('/media/video/upload-init', {
+    body: { name, mimeType, fileSize },
+  });
+  if (initError) throw initError;
+
+  const { mediaId, uploadId, partUrls } = initData;
+  const partSize = Math.ceil(fileSize / partUrls.length);
+  const partProgresses = new Array<number>(partUrls.length).fill(0);
+  const updateProgress = () => {
+    const total = partProgresses.reduce((sum, p) => sum + p, 0) / partUrls.length;
+    onProgress(Math.round(total));
+  };
+
+  const reader = await openFileChunkReader(fileUri);
+  try {
+    const uploadTasks = partUrls.map((url, i) => async () => {
+      const start = i * partSize;
+      const length = Math.min(start + partSize, fileSize) - start;
+      const bytes = await reader.readChunk(start, length);
+      const etag = await uploadPart(url, bytes, (partProgress) => {
+        partProgresses[i] = partProgress;
+        updateProgress();
+      });
+      return { partNumber: i + 1, etag };
+    });
+
+    const parts = await runWithConcurrency(uploadTasks, partConcurrency);
+
+    const { error: completeError } = await fetchClient.POST('/media/video/upload-complete', {
+      body: { mediaId, uploadId, parts },
+    });
+    if (completeError) throw completeError;
+
+    onProgress(100);
+    return { mediaId };
+  } finally {
+    reader.close();
+  }
 }
 
 async function runWithConcurrency<T>(tasks: (() => Promise<T>)[], limit: number): Promise<T[]> {

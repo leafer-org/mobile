@@ -15,8 +15,8 @@ export function useCloseChat(chatId: string) {
       });
       if (error) throw new Error('failed_to_close');
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: chatQueryKeys.detail(chatId) });
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: chatQueryKeys.detail(chatId) });
     },
   });
 }

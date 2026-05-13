@@ -6,4 +6,5 @@ export { OrganizationProfileScreen } from './compose/organization-profile-screen
 export { OrganizationsPickerScreen } from './compose/organizations-picker-screen';
 export { useMyOrganizations } from './model/use-my-organizations';
 
-export { EmployeeChatScreen, EmployeeInboxScreen } from './chat';
+export { EmployeeChatScreen, EmployeeInboxScreen } from './_chat';
+export { CurrentOrganizationProvider, useCurrentOrganizationId } from './domain/organization'
