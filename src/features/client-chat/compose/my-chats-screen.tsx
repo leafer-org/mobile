@@ -49,12 +49,23 @@ export function MyChatsScreen() {
           keyExtractor={(c) => c.chatId}
           renderItem={({ item }) => {
             const cp = findCounterpartParticipant(item.participants, myUserId ?? '');
-            const counterpartLabel =
-              cp?.kind === 'support' ? 'Поддержка' : (cp?.subjectId as string | undefined) ?? 'Чат';
+            const subject = cp?.subject;
+            let counterpartLabel: string;
+            let counterpartAvatarUrl: string | null = null;
+            if (!subject) {
+              counterpartLabel = cp ? 'Поддержка' : 'Чат';
+            } else if (subject.kind === 'organization') {
+              counterpartLabel = subject.name ?? 'Организация';
+              counterpartAvatarUrl = subject.logoUrl ?? null;
+            } else {
+              counterpartLabel = subject.fullName ?? subject.id.slice(0, 6);
+              counterpartAvatarUrl = subject.avatarUrl ?? null;
+            }
             return (
               <ClientChatListItem
                 item={item}
                 counterpartLabel={counterpartLabel}
+                counterpartAvatarUrl={counterpartAvatarUrl}
                 onPress={() => router.push(`/chats/${item.chatId}`)}
               />
             );

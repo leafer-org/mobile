@@ -27,14 +27,16 @@ const TABS: ReadonlyArray<{ key: InboxTab; label: string }> = [
 ];
 
 export function EmployeeInboxScreen({ organizationId, onChatPress }: Props) {
+
   const me = useMe();
+  const myUserId = me.data?.id ?? null;
+
   const { tab, setTab } = useInboxTabs();
   const filters = useMemo(() => buildInboxFilters(tab, organizationId), [tab, organizationId]);
   const inbox = useEmployeeInbox(filters);
   useInboxRealtime(`inbox:org:${organizationId}`);
   const { goToChat } = useInboxNavigation({ organizationId, onChatPress });
 
-  const myUserId = me.data?.id ?? null;
   const items = inbox.data?.chats ?? [];
 
   return (

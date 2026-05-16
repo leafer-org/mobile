@@ -15,11 +15,10 @@ export function useInboxRealtime(channel: string | null) {
         case 'chat.opened':
         case 'chat.preview-updated':
         case 'chat.status-changed':
+        case 'chat.read':
         case 'participant.claimed':
         case 'participant.released':
         case 'participant.reassigned':
-        case 'chat.closed':
-        case 'chat.reopened':
           qc.invalidateQueries({ queryKey: chatQueryKeys.all });
           break;
       }

@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { Pressable, View } from 'react-native';
 
 import { Text } from '@/kernel/ui/text';
@@ -13,16 +14,19 @@ type Props = {
 };
 
 export function EmployeeChatListItem({ item, myUserId, organizationId, onPress }: Props) {
-  const userParticipant = item.participants.find((p) => p.kind === 'user');
+  const userParticipant = item.participants.find((p) => p.subject?.kind === 'user');
+  const userSubject =
+    userParticipant?.subject?.kind === 'user' ? userParticipant.subject : null;
   const orgSlot = item.participants.find(
-    (p) => p.kind === 'organization' && p.subjectId === organizationId,
+    (p) => p.subject?.kind === 'organization' && p.subject.id === organizationId,
   );
-  const assignedToMe = orgSlot?.assignedUserId === myUserId;
-  const isUnassigned = orgSlot && orgSlot.assignedUserId === null;
+  const assignedToMe = orgSlot?.assignedUser?.id === myUserId;
+  const isUnassigned = orgSlot && !orgSlot.assignedUser;
 
-  const counterpartLabel = userParticipant?.subjectId
-    ? `Клиент ${(userParticipant.subjectId as string).slice(0, 6)}`
+  const counterpartLabel = userSubject
+    ? (userSubject.fullName ?? `Клиент ${userSubject.id.slice(0, 6)}`)
     : 'Клиент';
+  const counterpartAvatarUrl = userSubject?.avatarUrl ?? null;
 
   const timestampIso = item.lastMessage?.createdAt ?? item.updatedAt;
   const timestamp = formatInboxTimestamp(timestampIso);
@@ -32,8 +36,12 @@ export function EmployeeChatListItem({ item, myUserId, organizationId, onPress }
       onPress={onPress}
       className="px-4 py-3 flex-row items-center gap-3 active:bg-stone-100 dark:active:bg-stone-800 border-b border-stone-100 dark:border-stone-800"
     >
-      <View className="w-12 h-12 rounded-full bg-stone-200 dark:bg-stone-700 items-center justify-center">
-        <Text variant="label">К</Text>
+      <View className="w-12 h-12 rounded-full bg-stone-200 dark:bg-stone-700 items-center justify-center overflow-hidden">
+        {counterpartAvatarUrl ? (
+          <Image source={{ uri: counterpartAvatarUrl }} style={{ width: 48, height: 48 }} contentFit="cover" />
+        ) : (
+          <Text variant="label">{(counterpartLabel[0] ?? 'К').toUpperCase()}</Text>
+        )}
       </View>
       <View className="flex-1">
         <View className="flex-row items-center gap-2">

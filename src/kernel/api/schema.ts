@@ -568,7 +568,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** @description Список дочерних категорий с количеством товаров */
+    /** @description Список дочерних категорий каталога */
     get: operations['getCategories'];
     put?: never;
     post?: never;
@@ -2563,23 +2563,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/admin/chats/{chatId}/close': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Закрыть чат */
-    post: operations['closeChat'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2822,8 +2805,6 @@ export interface components {
       categoryId: string;
       name: string;
       iconUrl: string;
-      childCount: number;
-      itemCount: number;
     };
     ImagePreview: {
       /** Format: uri */
@@ -3797,22 +3778,49 @@ export interface components {
       categories: FilterInfoCategories[];
       params: components['schemas']['TriggerParam'][];
     };
+    UserRef: {
+      /** @enum {string} */
+      kind: UserRefKind;
+      /** Format: uuid */
+      id: string;
+      fullName?: string | null;
+      avatarUrl?: string | null;
+    };
+    OrganizationRef: {
+      /** @enum {string} */
+      kind: OrganizationRefKind;
+      /** Format: uuid */
+      id: string;
+      name?: string | null;
+      logoUrl?: string | null;
+    };
+    /** @description Кто/что стоит за slot'ом участника. Discriminated union по полю kind (значение литералом из enum внутри каждого варианта). Display-поля каждого варианта (fullName/name/avatarUrl/logoUrl) могут быть null при недоступности enrichment'а. */
+    ChatParticipantSubject:
+      | components['schemas']['UserRef']
+      | components['schemas']['OrganizationRef'];
+    ChatParticipant: {
+      /**
+       * Format: uuid
+       * @description ID самого slot'а в чате — используется в claim/release endpoints.
+       */
+      id: string;
+      /** @description Кто стоит за slot'ом. null когда subjectId в БД не зафиксирован (зарезервированный slot без привязки к user/org). */
+      subject?: components['schemas']['ChatParticipantSubject'] | null;
+      /** @description Сотрудник, claim'нувший org-slot. null для user-slot'ов и не-claim'нутых org-slot'ов. */
+      assignedUser?: components['schemas']['UserRef'] | null;
+    };
     ChatListItem: {
       chatId: string;
       /** @enum {string} */
       status: ChatListItemStatus;
-      participants: {
-        id: string;
-        /** @enum {string} */
-        kind: ChatListItemParticipantsKind;
-        subjectId: string | null;
-        assignedUserId: string | null;
-      }[];
+      participants: components['schemas']['ChatParticipant'][];
       contextItemId?: string | null;
       lastMessage: {
         messageId: string;
         preview: string;
         senderParticipantId: string | null;
+        /** @description Конкретный пользователь, отправивший сообщение (для org-slot'а — claim'нувший сотрудник). null если senderParticipantId не определён или enrichment недоступен. */
+        senderUser?: components['schemas']['UserRef'] | null;
         /** Format: date-time */
         createdAt: string;
       } | null;
@@ -3827,7 +3835,6 @@ export interface components {
     ChatOpenResponse: {
       chatId: string;
       reused: boolean;
-      reopened: boolean;
     };
     SearchHit: {
       messageId: string;
@@ -10986,7 +10993,6 @@ export interface operations {
         content: {
           'application/json': {
             messageId: string;
-            reopened: boolean;
           };
         };
       };
@@ -11302,7 +11308,6 @@ export interface operations {
           'application/json': {
             messageId: string;
             claimed: boolean;
-            reopened: boolean;
           };
         };
       };
@@ -11431,35 +11436,6 @@ export interface operations {
       cookie?: never;
     };
     requestBody?: never;
-    responses: {
-      /** @description OK */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      403: components['responses']['DomainError'];
-      404: components['responses']['DomainError'];
-      409: components['responses']['DomainError'];
-    };
-  };
-  closeChat: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        chatId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          reason?: string | null;
-        };
-      };
-    };
     responses: {
       /** @description OK */
       204: {
@@ -11620,7 +11596,6 @@ export enum PathsAdminChatsGetParametersQuerySlotKind {
 }
 export enum PathsAdminChatsGetParametersQueryStatus {
   open = 'open',
-  closed = 'closed',
   blocked = 'blocked',
 }
 export enum PathsAdminChatsPostRequestBodyApplicationJsonTargetKind {
@@ -11635,7 +11610,6 @@ export enum PathsAdminChatsSearchGetParametersQuerySlotKind {
 }
 export enum PathsAdminChatsSearchGetParametersQueryStatus {
   open = 'open',
-  closed = 'closed',
   blocked = 'blocked',
 }
 export enum ThrottledErrorResponseType {
@@ -11983,15 +11957,15 @@ export enum FilterInfoCategories {
   close = 'close',
   redirect = 'redirect',
 }
+export enum UserRefKind {
+  user = 'user',
+}
+export enum OrganizationRefKind {
+  organization = 'organization',
+}
 export enum ChatListItemStatus {
   open = 'open',
-  closed = 'closed',
   blocked = 'blocked',
-}
-export enum ChatListItemParticipantsKind {
-  user = 'user',
-  organization = 'organization',
-  support = 'support',
 }
 export enum SearchHitSenderKind {
   user = 'user',

@@ -66,7 +66,10 @@ export function ClientChatScreen({
     if (organizationName) return organizationName;
     if (!detail.data) return 'Организация';
     const cp = findCounterpartParticipant(detail.data.participants, myUserId ?? '');
-    return cp?.subjectId ?? 'Организация';
+    const subject = cp?.subject;
+    if (!subject) return 'Организация';
+    if (subject.kind === 'organization') return subject.name ?? 'Организация';
+    return subject.fullName ?? subject.id.slice(0, 6);
   }, [detail.data, myUserId, organizationName]);
 
   const flatMessages = useMemo(
@@ -139,7 +142,6 @@ export function ClientChatScreen({
         title={counterpartLabel}
         contextTitle={contextItemTitle ?? null}
         isBlocked={isBlocked}
-        isClosed={status === 'closed'}
         isEmpty={!chatId}
         messages={flatMessages}
         myParticipantId={myParticipantId}
@@ -167,7 +169,6 @@ type LayoutProps = {
   title: string;
   contextTitle: string | null;
   isBlocked: boolean;
-  isClosed: boolean;
   isEmpty: boolean;
   messages: ChatMessage[];
   myParticipantId: string | null;
@@ -185,7 +186,6 @@ function ChatLayout({
   title,
   contextTitle,
   isBlocked,
-  isClosed,
   isEmpty,
   messages,
   myParticipantId,
@@ -253,7 +253,6 @@ function ChatLayout({
         disabled={isBlocked}
         isSending={isSending}
         onSend={onSend}
-        placeholder={isClosed ? 'Сообщение откроет чат снова' : undefined}
       />
     </View>
   );

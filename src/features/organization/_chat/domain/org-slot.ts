@@ -7,7 +7,7 @@ export function findOrgSlot(
   if (!participants) return null;
   return (
     participants.find(
-      (p) => p.kind === 'organization' && p.subjectId === organizationId,
+      (p) => p.subject?.kind === 'organization' && p.subject.id === organizationId,
     ) ?? null
   );
 }
@@ -17,5 +17,5 @@ export function getMyParticipantId(
   myUserId: string | null,
 ): string | null {
   if (!orgSlot || !myUserId) return null;
-  return orgSlot.assignedUserId === myUserId ? orgSlot.id : null;
+  return orgSlot.assignedUser?.id === myUserId ? orgSlot.id : null;
 }

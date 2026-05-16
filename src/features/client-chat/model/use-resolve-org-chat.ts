@@ -25,7 +25,9 @@ export function useResolveOrgChat(organizationId: string): Result {
 
   const chat =
     query.data?.chats.find((c) =>
-      c.participants.some((p) => p.kind === 'organization' && p.subjectId === organizationId),
+      c.participants.some(
+        (p) => p.subject?.kind === 'organization' && p.subject.id === organizationId,
+      ),
     ) ?? null;
 
   return { chat, isLoading: query.isLoading };

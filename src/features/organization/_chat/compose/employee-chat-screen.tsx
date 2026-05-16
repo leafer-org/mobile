@@ -16,7 +16,6 @@ import { formatChatSubtitle, formatChatTitle } from '../domain/chat-title';
 import { flattenMessagePages } from '../domain/messages';
 import { findOrgSlot, getMyParticipantId } from '../domain/org-slot';
 import { useBlockChat, useUnblockChat } from '../model/use-block-chat';
-import { useCloseChat } from '../model/use-close-chat';
 import { useMessageContextMenu } from '../model/use-message-context-menu';
 import { useReleaseSlot } from '../model/use-release-slot';
 import { useSendAsEmployee } from '../model/use-send-as-employee';
@@ -44,8 +43,7 @@ export function EmployeeChatScreen({ chatId, organizationId, onBack }: Props) {
   const releaseMutation = useReleaseSlot(chatId);
   const blockMutation = useBlockChat(chatId);
   const unblockMutation = useUnblockChat(chatId);
-  const closeMutation = useCloseChat(chatId);
-  const isBusy = useAnyPending([releaseMutation, blockMutation, unblockMutation, closeMutation]);
+  const isBusy = useAnyPending([releaseMutation, blockMutation, unblockMutation]);
 
   const menu = useMessageContextMenu({ chatId });
 
@@ -72,9 +70,8 @@ export function EmployeeChatScreen({ chatId, organizationId, onBack }: Props) {
   );
 
   const status: ChatStatus = detail.data?.status ?? 'open';
-  const isMyClaim = orgSlot?.assignedUserId === myUserId;
-  const needsClaim = orgSlot?.assignedUserId === null;
-  const composerDisabled = status === 'closed';
+  const isMyClaim = orgSlot?.assignedUser?.id === myUserId;
+  const needsClaim = orgSlot !== null && !orgSlot.assignedUser;
   const isLoading = detail.isLoading || messages.isLoading;
 
   if (isLoading) {
@@ -97,7 +94,6 @@ export function EmployeeChatScreen({ chatId, organizationId, onBack }: Props) {
           onRelease={() => myParticipantId && releaseMutation.mutate(myParticipantId)}
           onBlock={() => blockMutation.mutate(null)}
           onUnblock={() => unblockMutation.mutate()}
-          onClose={() => closeMutation.mutate(null)}
           isBusy={isBusy}
         />
       }
@@ -115,7 +111,6 @@ export function EmployeeChatScreen({ chatId, organizationId, onBack }: Props) {
       composer={
         <EmployeeChatComposer
           needsClaim={needsClaim}
-          disabled={composerDisabled}
           isSending={sendMutation.isPending}
           onSend={({ text, mediaIds, claim }) =>
             sendMutation.mutate({

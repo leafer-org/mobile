@@ -23,20 +23,16 @@ export function systemEventLabel(type: string | undefined): string {
   switch (type) {
     case 'chat.opened':
       return 'Чат открыт';
-    case 'chat.closed':
-      return 'Чат закрыт';
-    case 'chat.reopened':
-      return 'Чат снова открыт';
     case 'chat.blocked':
       return 'Чат заблокирован';
     case 'chat.unblocked':
       return 'Чат разблокирован';
     case 'participant.claimed':
-      return 'Оператор взял чат';
+      return 'Чат принят';
     case 'participant.released':
-      return 'Оператор освободил чат';
+      return 'Чат снова в очереди';
     case 'participant.reassigned':
-      return 'Чат переназначен';
+      return 'Чат передан другому сотруднику';
     default:
       return 'Системное событие';
   }
@@ -46,7 +42,7 @@ export function findParticipantByKind(
   participants: ChatParticipant[],
   kind: ParticipantKind,
 ): ChatParticipant | undefined {
-  return participants.find((p) => p.kind === kind);
+  return participants.find((p) => p.subject?.kind === kind);
 }
 
 export function findMyParticipant(
@@ -54,7 +50,9 @@ export function findMyParticipant(
   myUserId: string,
 ): ChatParticipant | undefined {
   return participants.find(
-    (p) => p.subjectId === myUserId || p.assignedUserId === myUserId,
+    (p) =>
+      (p.subject?.kind === 'user' && p.subject.id === myUserId) ||
+      p.assignedUser?.id === myUserId,
   );
 }
 
@@ -63,7 +61,9 @@ export function findCounterpartParticipant(
   myUserId: string,
 ): ChatParticipant | undefined {
   return participants.find(
-    (p) => p.subjectId !== myUserId && p.assignedUserId !== myUserId,
+    (p) =>
+      !(p.subject?.kind === 'user' && p.subject.id === myUserId) &&
+      p.assignedUser?.id !== myUserId,
   );
 }
 

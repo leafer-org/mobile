@@ -1,6 +1,6 @@
 import type { PublicApiComponents } from '@/kernel/api';
 
-export type ChatStatus = 'open' | 'closed' | 'blocked';
+export type ChatStatus = 'open' | 'blocked';
 export type ParticipantKind = 'user' | 'organization' | 'support';
 export type MessageKind = 'text' | 'media' | 'system';
 

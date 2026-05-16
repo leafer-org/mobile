@@ -84,8 +84,6 @@ export function useChatRealtime(chatId: string | null) {
         }
         case 'chat.blocked':
         case 'chat.unblocked':
-        case 'chat.closed':
-        case 'chat.reopened':
         case 'participant.claimed':
         case 'participant.released':
         case 'participant.reassigned': {
@@ -93,8 +91,6 @@ export function useChatRealtime(chatId: string | null) {
             if (!prev) return prev;
             if (event.type === 'chat.blocked') return { ...prev, status: ChatListItemStatus.blocked };
             if (event.type === 'chat.unblocked') return { ...prev, status: ChatListItemStatus.open };
-            if (event.type === 'chat.closed') return { ...prev, status: ChatListItemStatus.closed };
-            if (event.type === 'chat.reopened') return { ...prev, status: ChatListItemStatus.open };
             return prev;
           });
           qc.invalidateQueries({ queryKey: detailKey });

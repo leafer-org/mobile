@@ -50,8 +50,10 @@ export function ClientChatByIdScreen({ chatId, onBack }: Props) {
   const title = useMemo(() => {
     if (!detail.data) return 'Чат';
     const cp = findCounterpartParticipant(detail.data.participants, myUserId ?? '');
-    if (cp?.kind === 'support') return 'Поддержка';
-    return cp?.subjectId ?? 'Чат';
+    const subject = cp?.subject;
+    if (!subject) return cp ? 'Поддержка' : 'Чат';
+    if (subject.kind === 'organization') return subject.name ?? 'Организация';
+    return subject.fullName ?? subject.id.slice(0, 6);
   }, [detail.data, myUserId]);
 
   const flatMessages = useMemo(
@@ -152,7 +154,6 @@ export function ClientChatByIdScreen({ chatId, onBack }: Props) {
             body: { text: text.length > 0 ? text : null, mediaIds },
           })
         }
-        placeholder={status === 'closed' ? 'Сообщение откроет чат снова' : undefined}
       />
       <EditMessageModal
         visible={editing !== null}

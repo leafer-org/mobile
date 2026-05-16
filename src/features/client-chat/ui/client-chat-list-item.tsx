@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { Pressable, View } from 'react-native';
 
 import { Text } from '@/kernel/ui/text';
@@ -6,10 +7,11 @@ import type { ChatListItem } from '@/support/chat';
 type Props = {
   item: ChatListItem;
   counterpartLabel: string;
+  counterpartAvatarUrl?: string | null;
   onPress: () => void;
 };
 
-export function ClientChatListItem({ item, counterpartLabel, onPress }: Props) {
+export function ClientChatListItem({ item, counterpartLabel, counterpartAvatarUrl, onPress }: Props) {
   const lastMsg = item.lastMessage;
   const previewText = lastMsg?.preview ?? '';
 
@@ -22,8 +24,12 @@ export function ClientChatListItem({ item, counterpartLabel, onPress }: Props) {
       onPress={onPress}
       className="px-4 py-3 flex-row items-center gap-3 active:bg-stone-100 dark:active:bg-stone-800 border-b border-stone-100 dark:border-stone-800"
     >
-      <View className="w-12 h-12 rounded-full bg-stone-200 dark:bg-stone-700 items-center justify-center">
-        <Text variant="label">{counterpartLabel.slice(0, 1).toUpperCase()}</Text>
+      <View className="w-12 h-12 rounded-full bg-stone-200 dark:bg-stone-700 items-center justify-center overflow-hidden">
+        {counterpartAvatarUrl ? (
+          <Image source={{ uri: counterpartAvatarUrl }} style={{ width: 48, height: 48 }} contentFit="cover" />
+        ) : (
+          <Text variant="label">{counterpartLabel.slice(0, 1).toUpperCase()}</Text>
+        )}
       </View>
       <View className="flex-1">
         <View className="flex-row items-center justify-between">

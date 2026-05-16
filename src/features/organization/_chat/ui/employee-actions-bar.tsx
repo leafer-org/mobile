@@ -3,12 +3,11 @@ import { View } from 'react-native';
 import { Button } from '@/kernel/ui/button';
 
 type Props = {
-  status: 'open' | 'closed' | 'blocked';
+  status: 'open' | 'blocked';
   isMyClaim: boolean;
   onRelease: () => void;
   onBlock: () => void;
   onUnblock: () => void;
-  onClose: () => void;
   isBusy?: boolean;
 };
 
@@ -18,7 +17,6 @@ export function EmployeeActionsBar({
   onRelease,
   onBlock,
   onUnblock,
-  onClose,
   isBusy,
 }: Props) {
   return (
@@ -32,16 +30,11 @@ export function EmployeeActionsBar({
         <Button variant="ghost" size="sm" onPress={onUnblock} loading={isBusy}>
           Разблок.
         </Button>
-      ) : status === 'open' ? (
+      ) : (
         <Button variant="ghost" size="sm" onPress={onBlock} loading={isBusy}>
           Блок
         </Button>
-      ) : null}
-      {status === 'open' ? (
-        <Button variant="ghost" size="sm" onPress={onClose} loading={isBusy}>
-          Закрыть
-        </Button>
-      ) : null}
+      )}
     </View>
   );
 }
